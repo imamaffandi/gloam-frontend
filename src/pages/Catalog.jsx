@@ -98,6 +98,21 @@ const Catalog = () => {
                     </div>
                 ))
             )}
+            {/* CTA */}
+            <section className='cta w-full pb-20 lg:pb-5 bg-dark text-white flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 p-5'>
+                <img src="/logo.png" alt="logo gloam" className="object-contain size-12 lg:size-32" />
+                <div className='flex flex-col items-start lg:items-center gap-2'>
+                    <p className='text-xs'>Nomor Whatsapp GLOAM</p>
+                    <p className='text-xl font-bold tracking-widest'>+62 812-3217-9590</p>
+                    <p className='text-xs'>Copyright gloamingmistake 2025</p>
+                </div>
+                <div className='w-full lg:w-1/3'>
+                    <p className='text-xs'>Email</p>
+                    <p className='text-xl font-bold tracking-widest'>gloamingmistake@gmail.com</p>
+                    <p className='text-xs pt-3'>Instagram</p>
+                    <p className='text-xl font-bold tracking-widest'>@gloamingmistake</p>
+                </div>
+            </section>
         </main>
     );
 };

@@ -25,16 +25,15 @@ const Contact = () => {
                         </div>
                         <div className="border-t-2 absolute bottom-10 flex items-start pt-10 justify-around w-full">
                             <a
-                                href="https://maps.app.goo.gl/ZnTjKwudWgqMezyB8"
+                                href="https://instagram.com/gloamingmistake"
                                 target="_blank"
                                 className="w-64 tracking-wider text-xs/5"
                             >
-                                Jl. Suropati Gg. 9 No.20, RT.1/RW.8, Pesanggrahan, Kec. Batu, Kota
-                                Batu, Jawa Timur 65313
+                                @gloamingmistake
                             </a>
-                            <p className="w-64 tracking-wider text-xs/5">08113577793</p>
+                            <p className="w-64 tracking-wider text-xs/5">+62 812-3217-9590</p>
                             <p className="w-64 tracking-wider text-xs/5">
-                                blackstudio.id@gmail.com
+                                gloamingmistake@gmail.com
                             </p>
                         </div>
                     </section>
