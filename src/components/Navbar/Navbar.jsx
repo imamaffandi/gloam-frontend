@@ -225,7 +225,7 @@ const Navbar = ({
     };
 
     return (
-        <div className="pill-nav-container fixed top-5 left-0 z-50 flex justify-center w-full">
+        <div className="pill-nav-container fixed top-5 left-0 z-30 flex justify-center w-full">
             <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
                 {isRouterLink(items?.[0]?.href) ? (
                     <Link

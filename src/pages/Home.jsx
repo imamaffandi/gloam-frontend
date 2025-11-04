@@ -46,8 +46,8 @@ const Home = () => {
                         italic={true}
                         textColor="#fff"
                         strokeColor="#ff0000"
-                        className='text-5xl'
-                        minFontSize={150} />
+                        className=''
+                        minFontSize={100} />
                     {/* <h1 className='text-xs text-gray-400'>gloamingmistake</h1> */}
                     <SplitText
                         Tag='h2'

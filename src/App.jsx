@@ -31,8 +31,8 @@ const AppContent = () => {
           pillTextColor="#000000"
         />
       )}
-      <Transition>
-        <Routes>
+      <Routes>
+        <Route element={<Transition />}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path='/catalog' element={<Catalog />} />
@@ -45,8 +45,8 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-        </Routes>
-      </Transition>
+        </Route>
+      </Routes>
     </div>
   );
 };

@@ -43,7 +43,7 @@ const Catalog = () => {
     }
 
     return (
-        <main className='flex items-center justify-around flex-wrap gap-6 p-8'>
+        <main className='font-body flex items-center justify-around flex-wrap gap-6 p-8 pt-40'>
             {products.length === 0 ? (
                 <div className="w-full text-center py-12">
                     <p className="text-gray-500 text-lg">No products available at the moment.</p>
@@ -51,7 +51,7 @@ const Catalog = () => {
             ) : (
                 products.map((product) => (
                     <div key={product._id} className="w-60 h-80 bg-gray-50 p-3 flex flex-col gap-1 rounded-2xl">
-                        <div className="h-48 bg-gray-700 rounded-xl overflow-hidden">
+                        <div className="h-48 bg- rounded-xl overflow-hidden">
                             {product.images && product.images.length > 0 ? (
                                 <img
                                     src={product.images[0]}
@@ -88,11 +88,11 @@ const Catalog = () => {
                                             </p>
                                         )}
                                     </div>
+                                    <span className="font-bold text-red-600">${product.price?.toFixed(2) || '0.00'}</span>
                                 </div>
-                                <span className="font-bold text-red-600">${product.price?.toFixed(2) || '0.00'}</span>
                             </div>
                             <button className="hover:dark cursor-pointer text-gray-50 bg-dark/70 py-2 rounded-md transition-colors hover:bg-dark">
-                                Add to cart
+                                Chat Seller
                             </button>
                         </div>
                     </div>

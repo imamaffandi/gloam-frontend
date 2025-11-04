@@ -28,7 +28,9 @@ const Admin = () => {
     useEffect(() => {
         fetchProducts();
     }, []);
-
+    useEffect(() => {
+        document.body.style.overflow = showForm ? "hidden" : "auto";
+    }, [showForm]);
     const fetchProducts = async () => {
         try {
             setLoading(true);
@@ -256,276 +258,24 @@ const Admin = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-800">Admin Panel</h1>
+        <div className="bg-gray-50 min-h-screen w-full">
+            {/* Header */}
+            <header className="sticky top-0 left-0 w-full bg-white shadow-sm z-10">
+                <div className="w-full px-6 py-4 flex justify-between items-center">
+                    <h1 className="text-3xl font-bold text-gray-800">Admin Panel</h1>
                     <button
-                        onClick={() => setShowForm(!showForm)}
-                        className={` ${showForm ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"} cursor-pointer text-white px-6 py-3 rounded-lg  transition font-medium`}
+                        onClick={() => setShowForm(true)}
+                        className="  text-black w-20 h-16 shadow-2xl"
                     >
-                        {showForm ? 'Cancel' : 'Add New Product'}
+                        Add Product
                     </button>
                 </div>
+            </header>
 
-                {/* Product Form */}
-                {showForm && (
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                        <h2 className="text-2xl font-bold mb-6">
-                            {editingProduct ? 'Edit Product' : 'Create New Product'}
-                        </h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Product Name *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Category *
-                                    </label>
-                                    <select
-                                        name="category"
-                                        value={formData.category}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                                    >
-                                        {categories.map(cat => (
-                                            <option key={cat} value={cat}>
-                                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Price ($) *
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        value={formData.price}
-                                        onChange={handleInputChange}
-                                        required
-                                        step="0.01"
-                                        min="0"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Stock *
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="stock"
-                                        value={formData.stock}
-                                        onChange={handleInputChange}
-                                        required
-                                        min="0"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Sizes
-                                    </label>
-                                    <div className="flex flex-wrap gap-3">
-                                        {availableSizes.map(size => (
-                                            <label key={size} className="flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    name="sizes"
-                                                    value={size}
-                                                    checked={formData.sizes.includes(size)}
-                                                    onChange={handleInputChange}
-                                                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                />
-                                                <span className="ml-2 text-gray-700">{size}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Colors
-                                    </label>
-                                    <div className="flex flex-wrap gap-3 mb-3">
-                                        {availableColors.map(color => (
-                                            <label key={color} className="flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    name="colors"
-                                                    value={color}
-                                                    checked={formData.colors.includes(color)}
-                                                    onChange={handleInputChange}
-                                                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                />
-                                                <span className="ml-2 text-gray-700">{color}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                    <div>
-                                        <label className="block font-medium mb-2 text-sm">
-                                            Other Color (optional)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="otherColor"
-                                            value={formData.otherColor}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter custom color(s), separated by commas"
-                                            className="w-full text-gray-400 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-gray-700 font-medium mb-2">
-                                        Description *
-                                    </label>
-                                    <textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        required
-                                        rows="4"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label className="flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            name="isAvailable"
-                                            checked={formData.isAvailable}
-                                            onChange={handleInputChange}
-                                            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                        />
-                                        <span className="ml-2 text-gray-700 font-medium">
-                                            Product is available
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-                            {/* Image input */}
-                            <div className='h-96 w-96 z-0'>
-                                <label className="block text-gray-700 font-medium mb-2">
-                                    Images
-                                </label>
-                                <div
-                                    className={`relative w-full aspect-square border-2 border-dashed rounded-lg overflow-hidden ${isDragging
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-                                        } transition-colors cursor-pointer`}
-                                    onDragOver={handleDragOver}
-                                    onDragLeave={handleDragLeave}
-                                    onDrop={handleDrop}
-                                    onClick={() => document.getElementById('image-input').click()}
-                                >
-                                    {imagePreviews.length > 0 ? (
-                                        <div className="relative w-full h-full">
-                                            <img
-                                                src={imagePreviews[0].src}
-                                                alt={imagePreviews[0].name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            {imagePreviews.length > 1 && (
-                                                <div className=" bg-black/70 text-white px-2 py-1 rounded text-xs">
-                                                    +{imagePreviews.length - 1}
-                                                </div>
-                                            )}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    removeImage(0);
-                                                }}
-                                                className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                                            <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            <p className="text-sm">Drag & drop images here</p>
-                                            <p className="text-xs mt-1">or click to select</p>
-                                        </div>
-                                    )}
-                                    <input
-                                        id="image-input"
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleFileInput}
-                                        className="hidden"
-                                    />
-                                </div>
-                                {imagePreviews.length > 1 && (
-                                    <div className="mt-2 flex gap-2 overflow-x-auto">
-                                        {imagePreviews.slice(1).map((preview, index) => (
-                                            <div key={preview.id} className="relative shrink-0 w-20 h-20 aspect-square border border-gray-300 rounded overflow-hidden">
-                                                <img
-                                                    src={preview.src}
-                                                    alt={preview.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeImage(index + 1)}
-                                                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-0.5 hover:bg-red-700 transition"
-                                                >
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="flex gap-4 mt-6">
-                                <button
-                                    type="submit"
-                                    className="bg-green-600 text-white cursor-pointer px-8 py-3 rounded-lg hover:bg-green-700 transition font-medium"
-                                >
-                                    {editingProduct ? 'Update Product' : 'Create Product'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="bg-gray-500 text-white cursor-pointer px-8 py-3 rounded-lg hover:bg-gray-600 transition font-medium"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                )}
-
-                {/* Products List */}
+            <main className="container mx-auto px-6 py-10">
+                {/* Product List */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <h2 className="text-2xl font-bold p-6 border-b">All Products</h2>
-
                     {products.length === 0 ? (
                         <div className="p-8 text-center text-gray-500">
                             No products found. Create your first product!
@@ -535,57 +285,37 @@ const Admin = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Category
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Price
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Stock
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
+                                        {["Name", "Category", "Price", "Stock", "Status", "Actions"].map((h) => (
+                                            <th
+                                                key={h}
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                {h}
+                                            </th>
+                                        ))}
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {products.map((product) => (
                                         <tr key={product._id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    {product.name}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">{product.category}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">
-                                                    ${product.price.toFixed(2)}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">{product.stock}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${product.isAvailable
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                    {product.isAvailable ? 'Available' : 'Unavailable'}
+                                            <td className="px-6 py-4">{product.name}</td>
+                                            <td className="px-6 py-4">{product.category}</td>
+                                            <td className="px-6 py-4">${product.price}</td>
+                                            <td className="px-6 py-4">{product.stock}</td>
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={`px-2 py-1 text-xs font-semibold rounded-full ${product.isAvailable
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-red-100 text-red-800"
+                                                        }`}
+                                                >
+                                                    {product.isAvailable ? "Available" : "Unavailable"}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <td className="px-6 py-4 text-sm font-medium">
                                                 <button
                                                     onClick={() => handleEdit(product)}
-                                                    className="text-blue-600 hover:text-blue-900 mr-4"
+                                                    className="text-blue-600 hover:text-blue-900 mr-3"
                                                 >
                                                     Edit
                                                 </button>
@@ -603,7 +333,234 @@ const Admin = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </main>
+
+            {/* MODAL FORM */}
+            {showForm && (
+                <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-scroll p-6 relative">
+                        <button
+                            onClick={resetForm}
+                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+                        >
+                            ✕
+                        </button>
+                        <h2 className="text-2xl font-bold mb-6">
+                            {editingProduct ? "Edit Product" : "Create New Product"}
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* --- Inputs --- */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                        Product Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                        Category *
+                                    </label>
+                                    <select
+                                        name="category"
+                                        value={formData.category}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="">Select category</option>
+                                        {categories.map((cat) => (
+                                            <option key={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                        Price ($)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                        Stock
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="stock"
+                                        value={formData.stock}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Sizes & Colors */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    Sizes
+                                </label>
+                                <div className="flex flex-wrap gap-3">
+                                    {availableSizes.map((size) => (
+                                        <label key={size} className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                name="sizes"
+                                                value={size}
+                                                checked={formData.sizes.includes(size)}
+                                                onChange={handleInputChange}
+                                            />
+                                            {size}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    Colors
+                                </label>
+                                <div className="flex flex-wrap gap-3 mb-2">
+                                    {availableColors.map((color) => (
+                                        <label key={color} className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                name="colors"
+                                                value={color}
+                                                checked={formData.colors.includes(color)}
+                                                onChange={handleInputChange}
+                                            />
+                                            {color}
+                                        </label>
+                                    ))}
+                                </div>
+                                <input
+                                    type="text"
+                                    name="otherColor"
+                                    placeholder="Other colors (optional)"
+                                    value={formData.otherColor}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-600"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    Description
+                                </label>
+                                <textarea
+                                    name="description"
+                                    rows="4"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    name="isAvailable"
+                                    checked={formData.isAvailable}
+                                    onChange={handleInputChange}
+                                />
+                                Product is available
+                            </label>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    Images
+                                </label>
+                                <div
+                                    className={`border-2 border-dashed rounded-lg aspect-square flex flex-col justify-center items-center cursor-pointer transition ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
+                                        }`}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                    onClick={() => document.getElementById("image-input").click()}
+                                >
+                                    {imagePreviews.length ? (
+                                        <img
+                                            src={imagePreviews[0].src}
+                                            alt=""
+                                            className="object-cover w-full h-full rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-400">Drag & drop or click to upload</p>
+                                    )}
+                                    <input
+                                        id="image-input"
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleFileInput}
+                                        className="hidden"
+                                    />
+                                </div>
+
+                                {imagePreviews.length > 1 && (
+                                    <div className="flex gap-2 mt-2 overflow-x-auto">
+                                        {imagePreviews.slice(1).map((img, i) => (
+                                            <div
+                                                key={img.id}
+                                                className="relative w-20 h-20 shrink-0 border rounded overflow-hidden"
+                                            >
+                                                <img
+                                                    src={img.src}
+                                                    alt={img.name}
+                                                    className="object-cover w-full h-full"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(i + 1)}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 text-xs"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {/* Buttons */}
+                                <div className="flex justify-end gap-4 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={resetForm}
+                                        className="  px-6 py-2 rounded-lg"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        // className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
+                                        className=" px-6 py-2 rounded-lg"
+                                    >
+                                        {editingProduct ? "Update Product" : "Create Product"}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

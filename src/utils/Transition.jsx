@@ -1,72 +1,92 @@
-import React, { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { gsap } from 'gsap';
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { useLocation, Outlet } from "react-router-dom";
+import "./Transition.css"
 
-const Transition = ({ children }) => {
+const Transition = () => {
     const location = useLocation();
-    const pageRef = useRef(null);
-    const overlayRef = useRef(null);
+    const containerRef = useRef(null);
 
     useEffect(() => {
-        const page = pageRef.current;
-        const overlay = overlayRef.current;
+        const ease = "power4.inOut";
 
-        if (!page || !overlay) return;
+        // Function to reveal the transition
+        const revealTransition = () => {
+            return new Promise((resolve) => {
+                gsap.set(".block", { scaleY: 1 });
+                gsap.to(".block", {
+                    scaleY: 0,
+                    duration: 1,
+                    stagger: {
+                        each: 0.1,
+                        from: "start",
+                        grid: [2, 5], // Fixed grid property
+                        axis: "x",
+                    },
+                    ease: ease,
+                    onComplete: resolve,
+                });
+            });
+        };
 
-        // Create timeline for page transition
-        const tl = gsap.timeline();
+        // Function to animate the transition
+        const animateTransition = () => {
+            return new Promise((resolve) => {
+                gsap.set(".block", { visibility: "visible", scaleY: 0 });
+                gsap.to(".block", {
+                    scaleY: 1,
+                    duration: 1,
+                    stagger: {
+                        each: 0.1,
+                        from: "start",
+                        grid: [2, 5],
+                        axis: "x",
+                    },
+                    ease: ease,
+                    onComplete: resolve,
+                });
+            });
+        };
 
-        // Set initial states
-        gsap.set(page, { opacity: 0, y: 30, scale: 0.95, visibility: 'hidden' });
-        gsap.set(overlay, { scaleX: 0, transformOrigin: 'left center' });
+        const links = document.querySelectorAll("a");
+        const handleLinkClick = (event) => {
+            event.preventDefault();
+            const href = event.currentTarget.getAttribute("href");
 
-        // Page transition animation sequence
-        tl.to(overlay, {
-            scaleX: 1,
-            duration: 0.8,
-            ease: 'power3.inOut'
-        })
-            .set(page, { visibility: 'visible' }) // Make content visible only after overlay covers screen
-            .to(page, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 1,
-                ease: 'power3.out'
-            }, '-=0.4')
-            .to(overlay, {
-                scaleX: 0,
-                duration: 0.8,
-                ease: 'power3.inOut',
-                transformOrigin: 'right center'
-            }, '-=0.6');
+            if (href && !href.startsWith("#") && href !== window.location.pathname) {
+                animateTransition().then(() => {
+                    window.location.href = href;
+                });
+            }
+        };
+
+        links.forEach((link) => {
+            link.addEventListener("click", handleLinkClick);
+        });
+
+        revealTransition().then(() => {
+            gsap.set(".block", { visibility: "hidden" });
+        });
 
         return () => {
-            tl.kill();
+            links.forEach((link) => {
+                link.removeEventListener("click", handleLinkClick);
+            });
         };
-    }, [location.pathname]);
+    }, [location]);
 
     return (
-        <>
-            {/* Transition overlay with gradient */}
-            <div
-                ref={overlayRef}
-                className="fixed inset-0 z-[9999] pointer-events-none"
-                style={{
-                    willChange: 'transform',
-                    background: '#222222'
-                }}
-            />
-
-            {/* Page content */}
-            <div
-                ref={pageRef}
-                className="transition-page"
-                style={{ willChange: 'opacity, transform' }}
-            >
-                {children}
+        <div ref={containerRef} className="page-container">
+            <div className="transition">
+                <div className="transition-row row-1">
+                    <div className="block"></div>
+                    <div className="block"></div>
+                    <div className="block"></div>
+                    <div className="block"></div>
+                </div>
             </div>
-        </>
+            <Outlet />
+        </div>
     );
 };
 

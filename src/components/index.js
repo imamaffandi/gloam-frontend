@@ -4,4 +4,13 @@ import SmoothScroll from "./SmoothScroll.jsx";
 import SplitText from "./SplitText.jsx";
 import Hero from "./Hero.jsx";
 import ImageCarousel from "./ImageCarousel.jsx";
-export { Navbar, Hero, ProtectedRoute, SmoothScroll, SplitText, ImageCarousel };
+import Glare from "./Glare.jsx";
+export {
+  Navbar,
+  Hero,
+  ProtectedRoute,
+  SmoothScroll,
+  SplitText,
+  ImageCarousel,
+  Glare,
+};
