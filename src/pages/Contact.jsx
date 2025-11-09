@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Glare } from '../components'
 import "./Contact.css"
+
 const Contact = () => {
 
     const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -12,6 +12,9 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const text = `Hello GLOAM,%0A%0AMy name is *${form.name}* (%0AEmail: ${form.email}%0A)%0A%0A${form.message}%0A%0A— Sent from the website contact form`;
+        const url = `https://api.whatsapp.com/send?phone=6281232179590&text=${text}`;
+        window.open(url, "_blank");
         setSubmitted(true);
     };
     return (
@@ -30,7 +33,7 @@ const Contact = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Visit Us</h3>
                         <p className="text-neutral-400 text-sm leading-relaxed">
-                            Jl. Ijen No. 45<br />Malang, East Java, Indonesia
+                            Jl. Cempaka, Pesanggrahan<br />Malang, East Java, Indonesia
                         </p>
                     </div>
                     <div>
