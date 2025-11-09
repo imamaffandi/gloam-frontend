@@ -27,7 +27,10 @@ const Catalog = () => {
     if (loading) {
         return (
             <main className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-800"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+
             </main>
         );
     }
@@ -50,8 +53,8 @@ const Catalog = () => {
                 </div>
             ) : (
                 products.map((product) => (
-                    <div key={product._id} className="w-60 h-80 bg-gray-50 p-3 flex flex-col gap-1 rounded-2xl">
-                        <div className="h-48 bg- rounded-xl overflow-hidden">
+                    <div key={product._id} className="w-60 h-80 bg-gray-50 border border-dark p-3 flex flex-col gap-1 rounded-2xl">
+                        <div className="h-48 border border-dark rounded-xl overflow-hidden">
                             {product.images && product.images.length > 0 ? (
                                 <img
                                     src={product.images[0]}
@@ -88,12 +91,14 @@ const Catalog = () => {
                                             </p>
                                         )}
                                     </div>
-                                    <span className="font-bold text-red-600">${product.price?.toFixed(2) || '0.00'}</span>
+                                    <span className="font-bold text-red-600">  {product.price
+                                        ? product.price.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+                                        : "Rp0"}</span>
                                 </div>
                             </div>
-                            <button className="hover:dark cursor-pointer text-gray-50 bg-dark/70 py-2 rounded-md transition-colors hover:bg-dark">
+                            <a href={`https://api.whatsapp.com/send?phone=6281232179590&text=Saya%20mau%20pesan%20${product.name}%20apa%20masih%20ready?`} target='_blank' className="text-center cursor-pointer text-gray-50 bg-dark/70 py-2 rounded-md transition-colors hover:bg-dark">
                                 Chat Seller
-                            </button>
+                            </a>
                         </div>
                     </div>
                 ))

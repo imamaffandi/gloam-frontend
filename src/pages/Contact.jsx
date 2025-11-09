@@ -1,45 +1,94 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Glare } from '../components'
 import "./Contact.css"
 const Contact = () => {
+
+    const [form, setForm] = useState({ name: '', email: '', message: '' });
+    const [submitted, setSubmitted] = useState(false);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+    };
     return (
-        <div className="h-screen w-full relative font-body">
-            <main className="absolute w-[80%] h-[80%] bg-stone-900 text-white shadow-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Glare glareColor="#ffffff"
-                    glareOpacity={0.3}
-                    background='transparent'
-                    glareAngle={-30}
-                    glareSize={300}
-                    transitionDuration={800}
-                    playOnce={false}>
-                    <section className="relative w-full h-full">
-                        <p className="absolute left-20 text-center top-10 text-5xl tracking-widest">
-                            Get In touch
+        <>
+            <main className="min-h-screen bg-neutral-900 text-neutral-100 flex flex-col items-center justify-center p-10 md:p-20 font-body">
+                {/* Title */}
+                <section className="text-center mb-10">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Contact Us</h1>
+                    <p className="text-sm md:text-base text-neutral-400 mt-3">
+                        Let’s collaborate, connect, or create something that lasts.
+                    </p>
+                </section>
+
+                {/* Contact Info */}
+                <div className="grid md:grid-cols-3 gap-10 w-full max-w-5xl mb-16 text-center">
+                    <div>
+                        <h3 className="text-lg font-semibold mb-2">Visit Us</h3>
+                        <p className="text-neutral-400 text-sm leading-relaxed">
+                            Jl. Ijen No. 45<br />Malang, East Java, Indonesia
                         </p>
-                        <div className="absolute w-full px-20 text-xs top-40 flex items-start justify-between">
-                            <p className="w-1/3">
-                                Contact us today and let’s create something extraordinary
-                                together! We’re excited to collaborate with you
-                            </p>
-                            <button className="footer-btn mr-40">Whatsapp</button>
-                        </div>
-                        <div className="border-t-2 absolute bottom-10 flex items-start pt-10 justify-around w-full">
-                            <a
-                                href="https://instagram.com/gloamingmistake"
-                                target="_blank"
-                                className="w-64 tracking-wider text-xs/5"
-                            >
-                                @gloamingmistake
-                            </a>
-                            <p className="w-64 tracking-wider text-xs/5">+62 812-3217-9590</p>
-                            <p className="w-64 tracking-wider text-xs/5">
-                                gloamingmistake@gmail.com
-                            </p>
-                        </div>
-                    </section>
-                </Glare>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold mb-2">Email</h3>
+                        <p className="text-neutral-400 text-sm leading-relaxed">gloamingmistake@gmail.com</p>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold mb-2">Instagram</h3>
+                        <p className="text-neutral-400 text-sm leading-relaxed">@gloamingmistake</p>
+                    </div>
+                </div>
+
+                {/* Contact Form */}
+                <form
+                    onSubmit={handleSubmit}
+                    className="w-full max-w-3xl bg-neutral-800 p-10 rounded-2xl shadow-lg flex flex-col gap-5"
+                >
+                    <input
+                        type="text"
+                        name="name"
+                        value={form.name}
+                        onChange={handleChange}
+                        placeholder="Your name"
+                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
+                        required
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="Your email"
+                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
+                        required
+                    />
+                    <textarea
+                        name="message"
+                        value={form.message}
+                        onChange={handleChange}
+                        placeholder="Write your message..."
+                        rows="6"
+                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="bg-white text-black px-8 py-3 rounded-md font-semibold tracking-wide hover:bg-neutral-200 transition-all"
+                    >
+                        {submitted ? 'Message Sent ✅' : 'Send Message'}
+                    </button>
+                </form>
+
+                <p className="text-xs text-neutral-500 mt-10 tracking-widest">
+                    © {new Date().getFullYear()} GLOAM — Crafted for imperfect hours.
+                </p>
             </main>
-        </div>
+        </>
+
     )
 }
 

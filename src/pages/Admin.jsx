@@ -19,9 +19,8 @@ const Admin = () => {
     });
     const [images, setImages] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [isDragging, setIsDragging] = useState(false);
 
-    const categories = ['shirt', 'pants', 'hoodies', 'jacket', 'T-shirt', 'accessories'];
+    const categories = ['Shirt', 'Pants', 'Hoodies', 'Jacket', 'T-shirt', 'Accessories'];
     const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     const availableColors = ['Black', 'White', 'Gray', 'Navy', 'Red', 'Blue', 'Green', 'Brown', 'Beige'];
 
@@ -75,23 +74,6 @@ const Admin = () => {
 
         setImages(newImages);
         setImagePreviews(newPreviews);
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const files = e.dataTransfer.files;
-        handleImageSelect(files);
     };
 
     const handleFileInput = (e) => {
@@ -258,70 +240,85 @@ const Admin = () => {
     }
 
     return (
-        <div className="bg-gray-50 min-h-screen w-full">
+        <div className="bg-neutral-50 min-h-screen w-full font-body text-neutral-800">
             {/* Header */}
-            <header className="sticky top-0 left-0 w-full bg-white shadow-sm z-10">
-                <div className="w-full px-6 py-4 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold text-gray-800">Admin Panel</h1>
+            <header className="sticky top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-10 border-b border-neutral-200">
+                <div className="w-full px-8 py-5 flex justify-between items-center">
+                    <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+                        Gloam Admin
+                    </h1>
                     <button
                         onClick={() => setShowForm(true)}
-                        className="  text-black w-20 h-16 shadow-2xl"
+                        className="px-6 py-3 rounded-lg bg-neutral-900 text-white font-medium hover:bg-neutral-700 transition-all shadow-md active:scale-95"
                     >
-                        Add Product
+                        + Add Product
                     </button>
                 </div>
             </header>
 
-            <main className="container mx-auto px-6 py-10">
+            <main className="container mx-auto px-6 py-10 space-y-10">
                 {/* Product List */}
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <h2 className="text-2xl font-bold p-6 border-b">All Products</h2>
+                <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+                    <div className="flex items-center justify-between p-6 border-b border-neutral-100">
+                        <h2 className="text-2xl font-semibold text-neutral-900">
+                            Product Inventory
+                        </h2>
+                        <p className="text-sm text-neutral-500">
+                            {products.length} {products.length === 1 ? "item" : "items"}
+                        </p>
+                    </div>
+
                     {products.length === 0 ? (
-                        <div className="p-8 text-center text-gray-500">
-                            No products found. Create your first product!
+                        <div className="p-12 text-center text-neutral-500">
+                            No products found. Create your first one!
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50">
+                            <table className="w-full border-collapse">
+                                <thead className="bg-neutral-100 text-neutral-600">
                                     <tr>
-                                        {["Name", "Category", "Price", "Stock", "Status", "Actions"].map((h) => (
-                                            <th
-                                                key={h}
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                {h}
-                                            </th>
-                                        ))}
+                                        {["Name", "Category", "Price", "Stock", "Status", "Actions"].map(
+                                            (h) => (
+                                                <th
+                                                    key={h}
+                                                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
+                                                >
+                                                    {h}
+                                                </th>
+                                            )
+                                        )}
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="divide-y divide-neutral-100">
                                     {products.map((product) => (
-                                        <tr key={product._id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4">{product.name}</td>
+                                        <tr
+                                            key={product._id}
+                                            className="hover:bg-neutral-50 transition-all"
+                                        >
+                                            <td className="px-6 py-4 font-medium">{product.name}</td>
                                             <td className="px-6 py-4">{product.category}</td>
                                             <td className="px-6 py-4">${product.price}</td>
                                             <td className="px-6 py-4">{product.stock}</td>
                                             <td className="px-6 py-4">
                                                 <span
-                                                    className={`px-2 py-1 text-xs font-semibold rounded-full ${product.isAvailable
-                                                        ? "bg-green-100 text-green-800"
-                                                        : "bg-red-100 text-red-800"
+                                                    className={`px-3 py-1 text-xs font-semibold rounded-full ${product.isAvailable
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-red-100 text-red-700"
                                                         }`}
                                                 >
                                                     {product.isAvailable ? "Available" : "Unavailable"}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-sm font-medium">
+                                            <td className="px-6 py-4 text-sm font-medium flex gap-3">
                                                 <button
                                                     onClick={() => handleEdit(product)}
-                                                    className="text-blue-600 hover:text-blue-900 mr-3"
+                                                    className="text-blue-600 hover:text-blue-800 transition-colors"
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(product._id)}
-                                                    className="text-red-600 hover:text-red-900"
+                                                    className="text-red-600 hover:text-red-800 transition-colors"
                                                 >
                                                     Delete
                                                 </button>
@@ -337,23 +334,23 @@ const Admin = () => {
 
             {/* MODAL FORM */}
             {showForm && (
-                <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-scroll p-6 relative">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 relative">
                         <button
                             onClick={resetForm}
-                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+                            className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800 text-2xl"
                         >
-                            ✕
+                            ×
                         </button>
-                        <h2 className="text-2xl font-bold mb-6">
+                        <h2 className="text-2xl font-semibold mb-6 text-neutral-900">
                             {editingProduct ? "Edit Product" : "Create New Product"}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* --- Inputs --- */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Inputs */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    <label className=" text-sm font-medium text-neutral-700 mb-2">
                                         Product Name *
                                     </label>
                                     <input
@@ -362,12 +359,12 @@ const Admin = () => {
                                         value={formData.name}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    <label className=" text-sm font-medium text-neutral-700 mb-2">
                                         Category *
                                     </label>
                                     <select
@@ -375,7 +372,7 @@ const Admin = () => {
                                         value={formData.category}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                     >
                                         <option value="">Select category</option>
                                         {categories.map((cat) => (
@@ -385,20 +382,20 @@ const Admin = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
-                                        Price ($)
+                                    <label className=" text-sm font-medium text-neutral-700 mb-2">
+                                        Price (Rp.)
                                     </label>
                                     <input
                                         type="number"
                                         name="price"
                                         value={formData.price}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                    <label className=" text-sm font-medium text-neutral-700 mb-2">
                                         Stock
                                     </label>
                                     <input
@@ -406,19 +403,22 @@ const Admin = () => {
                                         name="stock"
                                         value={formData.stock}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                     />
                                 </div>
                             </div>
 
-                            {/* Sizes & Colors */}
+                            {/* Sizes */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                <label className=" text-sm font-medium text-neutral-700 mb-2">
                                     Sizes
                                 </label>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-4">
                                     {availableSizes.map((size) => (
-                                        <label key={size} className="flex items-center gap-2">
+                                        <label
+                                            key={size}
+                                            className="flex items-center gap-2 text-sm text-neutral-600"
+                                        >
                                             <input
                                                 type="checkbox"
                                                 name="sizes"
@@ -432,13 +432,17 @@ const Admin = () => {
                                 </div>
                             </div>
 
+                            {/* Colors */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                <label className=" text-sm font-medium text-neutral-700 mb-2">
                                     Colors
                                 </label>
-                                <div className="flex flex-wrap gap-3 mb-2">
+                                <div className="flex flex-wrap gap-4 mb-3">
                                     {availableColors.map((color) => (
-                                        <label key={color} className="flex items-center gap-2">
+                                        <label
+                                            key={color}
+                                            className="flex items-center gap-2 text-sm text-neutral-600"
+                                        >
                                             <input
                                                 type="checkbox"
                                                 name="colors"
@@ -456,12 +460,13 @@ const Admin = () => {
                                     placeholder="Other colors (optional)"
                                     value={formData.otherColor}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-600"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                 />
                             </div>
 
+                            {/* Description */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2 bg-white">
+                                <label className=" text-sm font-medium text-neutral-700 mb-2">
                                     Description
                                 </label>
                                 <textarea
@@ -469,11 +474,12 @@ const Admin = () => {
                                     rows="4"
                                     value={formData.description}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                 />
                             </div>
 
-                            <label className="flex items-center gap-2">
+                            {/* Availability */}
+                            <label className="flex items-center gap-2 text-sm text-neutral-700">
                                 <input
                                     type="checkbox"
                                     name="isAvailable"
@@ -485,42 +491,40 @@ const Admin = () => {
 
                             {/* Image Upload */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2 bg-white">
-                                    Images
+                                <label className=" text-sm font-medium text-neutral-700 mb-3">
+                                    Product Images
                                 </label>
-                                <div
-                                    className={`border-2 border-dashed rounded-lg aspect-square flex flex-col justify-center items-center cursor-pointer transition ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
-                                        }`}
-                                    onDragOver={handleDragOver}
-                                    onDragLeave={handleDragLeave}
-                                    onDrop={handleDrop}
-                                    onClick={() => document.getElementById("image-input").click()}
-                                >
-                                    {imagePreviews.length ? (
-                                        <img
-                                            src={imagePreviews[0].src}
-                                            alt=""
-                                            className="object-cover w-full h-full rounded-lg"
-                                        />
-                                    ) : (
-                                        <p className="text-gray-400">Drag & drop or click to upload</p>
-                                    )}
-                                    <input
-                                        id="image-input"
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleFileInput}
-                                        className="hidden"
-                                    />
-                                </div>
 
+                                {/* File input */}
+                                <input
+                                    id="image-input"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleFileInput}
+                                    className=" w-full text-sm text-neutral-700 border border-neutral-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-neutral-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-700"
+                                />
+
+                                {/* Main Preview */}
+                                {imagePreviews.length > 0 && (
+                                    <div className="mt-4">
+                                        <div className="w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                            <img
+                                                src={imagePreviews[0].src}
+                                                alt="Main preview"
+                                                className="object-cover w-full h-full"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Additional Thumbnails */}
                                 {imagePreviews.length > 1 && (
-                                    <div className="flex gap-2 mt-2 overflow-x-auto">
+                                    <div className="flex gap-2 mt-3 overflow-x-auto">
                                         {imagePreviews.slice(1).map((img, i) => (
                                             <div
                                                 key={img.id}
-                                                className="relative w-20 h-20 shrink-0 border rounded overflow-hidden"
+                                                className="relative w-20 h-20 shrink-0 border border-neutral-200 rounded-lg overflow-hidden"
                                             >
                                                 <img
                                                     src={img.src}
@@ -538,30 +542,30 @@ const Admin = () => {
                                         ))}
                                     </div>
                                 )}
-                                {/* Buttons */}
-                                <div className="flex justify-end gap-4 pt-4">
-                                    <button
-                                        type="button"
-                                        onClick={resetForm}
-                                        className="  px-6 py-2 rounded-lg"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        // className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
-                                        className=" px-6 py-2 rounded-lg"
-                                    >
-                                        {editingProduct ? "Update Product" : "Create Product"}
-                                    </button>
-                                </div>
                             </div>
 
+                            {/* Buttons */}
+                            <div className="flex justify-end gap-4 pt-6">
+                                <button
+                                    type="button"
+                                    onClick={resetForm}
+                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95"
+                                >
+                                    {editingProduct ? "Update Product" : "Create Product"}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
             )}
         </div>
+
     );
 };
 
