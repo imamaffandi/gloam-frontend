@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
 import { Navbar, ProtectedRoute, SmoothScroll } from './components';
-import { Home, Login, Admin, Catalog, Contact } from './pages';
+import { Home, Login, Admin, Catalog, Contact, Blog } from './pages';
 import Transition from './utils/Transition'
 
 const AppContent = () => {
@@ -35,6 +35,7 @@ const AppContent = () => {
         <Route element={<Transition />}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path='/blog' element={<Blog />} />
           <Route path='/catalog' element={<Catalog />} />
           <Route path='/contact' element={<Contact />} />
           <Route

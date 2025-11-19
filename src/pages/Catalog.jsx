@@ -62,8 +62,8 @@ const Catalog = () => {
                     </div>
                 ) : (
                     products.map((product) => (
-                        <div key={product._id} className="w-60 h-80 bg-gray-50 border border-dark p-3 flex flex-col gap-1 rounded-2xl">
-                            <div className="h-48 border border-dark rounded-xl overflow-hidden">
+                        <div key={product._id} className="w-60 h-80 shadow p-3 flex flex-col gap-1">
+                            <div className="h-48 shadow overflow-hidden">
                                 {product.images && product.images.length > 0 ? (
                                     <img
                                         src={product.images[0]}

@@ -6,7 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useGSAP } from '@gsap/react';
 // Import carousel images
-import { foto1, foto2, foto3, video1, video2, video3, a, b, c, d, e, f, g, h, i } from '../assets';
+import { foto1, foto2, foto3, video1, video2, video3, b, c, d, e, f, g, i } from '../assets';
+import usir from '../assets/usir.jpg'
 import { Link } from 'react-router-dom';
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
@@ -16,7 +17,7 @@ const Home = () => {
     const videoRefs = useRef([]);
     const mainRef = useRef()
     const carouselImages = [foto1, foto2, foto3];
-    const images = [a, b, c, d, e, f, g, h, i]
+    const images = [b, c, d, e, f, g, i]
     const videos = [video1, video2, video3];
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -65,10 +66,9 @@ const Home = () => {
                         strokeColor="#ff0000"
                         className=''
                         minFontSize={100} />
-                    {/* <h1 className='text-xs text-gray-400'>gloamingmistake</h1> */}
                     <SplitText
                         Tag='h2'
-                        text='Embrace the Imperfect Hour'
+                        text='Overpower The World'
                         type='words'
                         stagger={0.04}
                         fromY={20}
@@ -86,9 +86,7 @@ const Home = () => {
                     <div className="w-72 absolute right-5 top-20">
                         <p className="font-bold text-5xl">Gloam</p>
                         <p className="text-justify text-xs/3.5">
-                            Gloam blends minimalism and edge—creating timeless pieces that move
-                            with you through every season. From casual staples to refined
-                            statements, we design with intention and craft with purpose.
+                            Gloaming Mistake overpower the world
                         </p>
                     </div>
 
@@ -180,6 +178,25 @@ const Home = () => {
                             />
                         </Link>
                     ))}
+                </div>
+            </section>
+            {/* Blog */}
+            <section id='blog' className='w-full px-8 lg:px-20 min-h-screen flex flex-col gap-5 items-center justify-center'>
+                <p>Our journals</p>
+                <div className='flex flex-wrap items-center justify-center w-full py-10'>
+                    <Link to={'/blog'} className=' overflow-hidden w-56 m-2 hover:shadow cursor-pointer transition-all duration-300'>
+                        <img
+                            src={usir}
+                            alt={`placeholder`}
+                            className='object-cover w-40 lg:w-72 h-20 lg:h-56'
+                        />
+                        <p className='font-body text-sm font-semibold tracking-wider'>RIVIEW BERITA : USIR PARA JAGOAN!...</p>
+                        <p className='font-body text-xs tracking-wider'> Ada malam ketika musik seharusnya menjadi rumah:
+                            tempat suara menemukan tubuhnya,
+                            dan tubuh menemukan kebebasannya.
+                            Namun di Kota Batu, di sebuah gigs underground,...</p>
+                    </Link>
+
                 </div>
             </section>
             {/* Video section */}
