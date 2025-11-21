@@ -59,4 +59,37 @@ export const productAPI = {
   },
 };
 
+// Blog API calls
+export const blogAPI = {
+  // Get all blogs
+  getAll: async () => {
+    const response = await api.get("/blogs");
+    return response.data;
+  },
+
+  // Get single blog by ID
+  getById: async (id) => {
+    const response = await api.get(`/blogs/${id}`);
+    return response.data;
+  },
+
+  // Create new blog
+  create: async (blogData) => {
+    const response = await api.post("/blogs", blogData);
+    return response.data;
+  },
+
+  // Update blog
+  update: async (id, blogData) => {
+    const response = await api.put(`/blogs/${id}`, blogData);
+    return response.data;
+  },
+
+  // Delete blog
+  delete: async (id) => {
+    const response = await api.delete(`/blogs/${id}`);
+    return response.data;
+  },
+};
+
 export default api;

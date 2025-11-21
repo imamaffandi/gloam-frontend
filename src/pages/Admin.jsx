@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { productAPI } from '../services/api';
+import { productAPI, blogAPI } from '../services/api';
 
 const Admin = () => {
     const [products, setProducts] = useState([]);
+    const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [deleting, setDeleting] = useState({});
+    const [deletingBlog, setDeletingBlog] = useState({});
     const [showForm, setShowForm] = useState(false);
+    const [showBlogForm, setShowBlogForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
@@ -19,6 +24,13 @@ const Admin = () => {
     });
     const [images, setImages] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
+    const [blogFormData, setBlogFormData] = useState({
+        title: '',
+        content: ''
+    });
+    const [blogImage, setBlogImage] = useState(null);
+    const [blogImagePreview, setBlogImagePreview] = useState(null);
+    const [submittingBlog, setSubmittingBlog] = useState(false);
 
     const categories = ['Shirt', 'Pants', 'Hoodies', 'Jacket', 'T-shirt', 'Accessories'];
     const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -26,10 +38,11 @@ const Admin = () => {
 
     useEffect(() => {
         fetchProducts();
+        fetchBlogs();
     }, []);
     useEffect(() => {
-        document.body.style.overflow = showForm ? "hidden" : "auto";
-    }, [showForm]);
+        document.body.style.overflow = (showForm || showBlogForm) ? "hidden" : "auto";
+    }, [showForm, showBlogForm]);
     const fetchProducts = async () => {
         try {
             setLoading(true);
@@ -40,6 +53,16 @@ const Admin = () => {
             alert('Failed to load products');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchBlogs = async () => {
+        try {
+            const data = await blogAPI.getAll();
+            setBlogs(data);
+        } catch (err) {
+            console.error('Error fetching blogs:', err);
+            // Don't show alert for blogs, just log error
         }
     };
 
@@ -79,6 +102,29 @@ const Admin = () => {
     const handleFileInput = (e) => {
         const files = e.target.files;
         handleImageSelect(files);
+    };
+
+    const handleBlogImageSelect = async (file) => {
+        if (!file || !file.type.startsWith('image/')) return;
+
+        const base64 = await convertToBase64(file);
+        setBlogImage(base64);
+        setBlogImagePreview({
+            src: base64,
+            name: file.name
+        });
+    };
+
+    const handleBlogFileInput = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleBlogImageSelect(file);
+        }
+    };
+
+    const removeBlogImage = () => {
+        setBlogImage(null);
+        setBlogImagePreview(null);
     };
 
     const removeImage = (index) => {
@@ -126,6 +172,7 @@ const Admin = () => {
         e.preventDefault();
 
         try {
+            setSubmitting(true);
             // Combine selected colors with other color if provided
             let colors = [...formData.colors];
             if (formData.otherColor && formData.otherColor.trim()) {
@@ -159,6 +206,8 @@ const Admin = () => {
         } catch (err) {
             console.error('Error saving product:', err);
             alert('Failed to save product');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -203,12 +252,15 @@ const Admin = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
+                setDeleting(prev => ({ ...prev, [id]: true }));
                 await productAPI.delete(id);
                 alert('Product deleted successfully!');
                 fetchProducts();
             } catch (err) {
                 console.error('Error deleting product:', err);
                 alert('Failed to delete product');
+            } finally {
+                setDeleting(prev => ({ ...prev, [id]: false }));
             }
         }
     };
@@ -231,10 +283,69 @@ const Admin = () => {
         setShowForm(false);
     };
 
+    const handleBlogInputChange = (e) => {
+        const { name, value } = e.target;
+        setBlogFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleBlogSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            setSubmittingBlog(true);
+            const blogData = {
+                title: blogFormData.title,
+                content: blogFormData.content,
+                image: blogImage
+            };
+
+            await blogAPI.create(blogData);
+            alert('Blog created successfully!');
+            resetBlogForm();
+            fetchBlogs();
+        } catch (err) {
+            console.error('Error saving blog:', err);
+            alert('Failed to save blog');
+        } finally {
+            setSubmittingBlog(false);
+        }
+    };
+
+    const resetBlogForm = () => {
+        setBlogFormData({
+            title: '',
+            content: ''
+        });
+        setBlogImage(null);
+        setBlogImagePreview(null);
+        setShowBlogForm(false);
+    };
+
+    const handleDeleteBlog = async (id) => {
+        if (window.confirm('Are you sure you want to delete this blog?')) {
+            try {
+                setDeletingBlog(prev => ({ ...prev, [id]: true }));
+                await blogAPI.delete(id);
+                alert('Blog deleted successfully!');
+                fetchBlogs();
+            } catch (err) {
+                console.error('Error deleting blog:', err);
+                alert('Failed to delete blog');
+            } finally {
+                setDeletingBlog(prev => ({ ...prev, [id]: false }));
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
             </div>
         );
     }
@@ -247,12 +358,20 @@ const Admin = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
                         Gloam Admin
                     </h1>
-                    <button
-                        onClick={() => setShowForm(true)}
-                        className="px-6 py-3 rounded-lg bg-neutral-900 text-white font-medium hover:bg-neutral-700 transition-all shadow-md active:scale-95"
-                    >
-                        + Add Product
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => setShowBlogForm(true)}
+                            className="px-6 py-3 rounded-lg bg-neutral-800 text-white font-medium hover:bg-neutral-600 transition-all shadow-md active:scale-95"
+                        >
+                            Generate Blog
+                        </button>
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="px-6 py-3 rounded-lg bg-neutral-900 text-white font-medium hover:bg-neutral-700 transition-all shadow-md active:scale-95"
+                        >
+                            + Add Product
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -312,15 +431,107 @@ const Admin = () => {
                                             <td className="px-6 py-4 text-sm font-medium flex gap-3">
                                                 <button
                                                     onClick={() => handleEdit(product)}
-                                                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                                                    disabled={deleting[product._id]}
+                                                    className="text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(product._id)}
-                                                    className="text-red-600 hover:text-red-800 transition-colors"
+                                                    disabled={deleting[product._id]}
+                                                    className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                                 >
-                                                    Delete
+                                                    {deleting[product._id] ? (
+                                                        <>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                            </svg>
+                                                            Deleting...
+                                                        </>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+
+                {/* Blog List */}
+                <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+                    <div className="flex items-center justify-between p-6 border-b border-neutral-100">
+                        <h2 className="text-2xl font-semibold text-neutral-900">
+                            Blog Posts
+                        </h2>
+                        <p className="text-sm text-neutral-500">
+                            {blogs.length} {blogs.length === 1 ? "post" : "posts"}
+                        </p>
+                    </div>
+
+                    {blogs.length === 0 ? (
+                        <div className="p-12 text-center text-neutral-500">
+                            No blogs found. Create your first one!
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                                <thead className="bg-neutral-100 text-neutral-600">
+                                    <tr>
+                                        {["Title", "Preview", "Created", "Actions"].map(
+                                            (h) => (
+                                                <th
+                                                    key={h}
+                                                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
+                                                >
+                                                    {h}
+                                                </th>
+                                            )
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-100">
+                                    {blogs.map((blog) => (
+                                        <tr
+                                            key={blog._id}
+                                            className="hover:bg-neutral-50 transition-all"
+                                        >
+                                            <td className="px-6 py-4 font-medium max-w-xs truncate">{blog.title}</td>
+                                            <td className="px-6 py-4">
+                                                {blog.image ? (
+                                                    <img
+                                                        src={blog.image}
+                                                        alt={blog.title}
+                                                        className="w-16 h-16 object-cover rounded-lg"
+                                                    />
+                                                ) : (
+                                                    <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center text-neutral-400 text-xs">
+                                                        No Image
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-neutral-500">
+                                                {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm font-medium">
+                                                <button
+                                                    onClick={() => handleDeleteBlog(blog._id)}
+                                                    disabled={deletingBlog[blog._id]}
+                                                    className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                                >
+                                                    {deletingBlog[blog._id] ? (
+                                                        <>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-4 animate-spin">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                            </svg>
+                                                            Deleting...
+                                                        </>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
                                                 </button>
                                             </td>
                                         </tr>
@@ -508,12 +719,20 @@ const Admin = () => {
                                 {/* Main Preview */}
                                 {imagePreviews.length > 0 && (
                                     <div className="mt-4">
-                                        <div className="w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                        <div className="relative w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
                                             <img
                                                 src={imagePreviews[0].src}
                                                 alt="Main preview"
                                                 className="object-cover w-full h-full"
                                             />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(0)}
+                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-sm font-semibold hover:bg-red-600 transition-colors shadow-lg"
+                                                title="Delete image"
+                                            >
+                                                ✕
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -534,7 +753,8 @@ const Admin = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeImage(i + 1)}
-                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 text-xs"
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs font-semibold hover:bg-red-600 transition-colors shadow-lg"
+                                                    title="Delete image"
                                                 >
                                                     ✕
                                                 </button>
@@ -549,15 +769,138 @@ const Admin = () => {
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all"
+                                    disabled={submitting}
+                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95"
+                                    disabled={submitting}
+                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center"
                                 >
-                                    {editingProduct ? "Update Product" : "Create Product"}
+                                    {submitting ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                                            {editingProduct ? "Updating..." : "Creating..."}
+                                        </>
+                                    ) : (
+                                        editingProduct ? "Update Product" : "Create Product"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* BLOG MODAL FORM */}
+            {showBlogForm && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 relative">
+                        <button
+                            onClick={resetBlogForm}
+                            className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800 text-2xl"
+                        >
+                            ×
+                        </button>
+                        <h2 className="text-2xl font-semibold mb-6 text-neutral-900">
+                            Create New Blog
+                        </h2>
+
+                        <form onSubmit={handleBlogSubmit} className="space-y-6">
+                            {/* Title */}
+                            <div>
+                                <label className="text-sm font-medium text-neutral-700 mb-2 ">
+                                    Title *
+                                </label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={blogFormData.title}
+                                    onChange={handleBlogInputChange}
+                                    required
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
+                                    placeholder="Enter blog title"
+                                />
+                            </div>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="text-sm font-medium text-neutral-700 mb-3 ">
+                                    Blog Image
+                                </label>
+
+                                {/* File input */}
+                                <input
+                                    id="blog-image-input"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleBlogFileInput}
+                                    className="w-full text-sm text-neutral-700 border border-neutral-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-neutral-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-700"
+                                />
+
+                                {/* Image Preview */}
+                                {blogImagePreview && (
+                                    <div className="mt-4">
+                                        <div className="relative w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                            <img
+                                                src={blogImagePreview.src}
+                                                alt="Blog preview"
+                                                className="object-cover w-full h-full"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={removeBlogImage}
+                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-sm font-semibold hover:bg-red-600 transition-colors shadow-lg"
+                                                title="Delete image"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Content */}
+                            <div>
+                                <label className="text-sm font-medium text-neutral-700 mb-2 ">
+                                    Content *
+                                </label>
+                                <textarea
+                                    name="content"
+                                    rows="12"
+                                    value={blogFormData.content}
+                                    onChange={handleBlogInputChange}
+                                    required
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none resize-y"
+                                    placeholder="Enter blog content..."
+                                />
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex justify-end gap-4 pt-6">
+                                <button
+                                    type="button"
+                                    onClick={resetBlogForm}
+                                    disabled={submittingBlog}
+                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submittingBlog}
+                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center"
+                                >
+                                    {submittingBlog ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                                            Creating...
+                                        </>
+                                    ) : (
+                                        "Create Blog"
+                                    )}
                                 </button>
                             </div>
                         </form>

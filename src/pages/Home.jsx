@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap';
 import { Hero, SplitText, ImageCarousel } from '../components';
 import { Glare } from '../components'
@@ -6,9 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useGSAP } from '@gsap/react';
 // Import carousel images
-import { foto1, foto2, foto3, video1, video2, video3, b, c, d, e, f, g, i } from '../assets';
-import usir from '../assets/usir.jpg'
+import { img1, img2, img3, video1, video2, video3, b, c, d, e, f, g, i } from '../assets';
 import { Link } from 'react-router-dom';
+import { blogAPI } from '../services/api';
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
 // Carousel images array
@@ -16,9 +16,11 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 const Home = () => {
     const videoRefs = useRef([]);
     const mainRef = useRef()
-    const carouselImages = [foto1, foto2, foto3];
+    const carouselImages = [img1, img2, img3];
     const images = [b, c, d, e, f, g, i]
     const videos = [video1, video2, video3];
+    const [blogs, setBlogs] = useState([]);
+    const [loadingBlogs, setLoadingBlogs] = useState(true);
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.defaults({ ease: "power1.in", duration: 2 });
@@ -43,6 +45,24 @@ const Home = () => {
         }, mainRef);
 
         return () => ctx.revert();
+    }, []);
+
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                setLoadingBlogs(true);
+                const data = await blogAPI.getAll();
+                setBlogs(data);
+            } catch (err) {
+                console.error('Error fetching blogs:', err);
+                // Don't show error, just use empty array
+                setBlogs([]);
+            } finally {
+                setLoadingBlogs(false);
+            }
+        };
+
+        fetchBlogs();
     }, []);
     return (
         <main className="mx-auto font-body h-full">
@@ -92,7 +112,7 @@ const Home = () => {
 
                     {/* New Arrivals */}
                     <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-200 h-[80%] w-[70%] rounded-br-3xl">
+                        <div className="relative bg-gray-200 h-[80%] w-full md:w-[70%] rounded-br-3xl">
                             <p className="font-bold text-7xl/16 p-3">New Arrivals</p>
                             <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
                                 <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
@@ -110,7 +130,7 @@ const Home = () => {
 
                     {/* Men Collection */}
                     <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-300 h-[80%] w-[70%] rounded-br-3xl">
+                        <div className="relative bg-gray-300 h-[80%] w-full md:w-[70%] rounded-br-3xl">
                             <p className="font-bold text-7xl/16 p-3">Men’s Collection</p>
                             <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
                                 <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
@@ -128,7 +148,7 @@ const Home = () => {
 
                     {/* Women Collection */}
                     <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-400 h-[80%] w-[70%] rounded-br-3xl">
+                        <div className="relative bg-gray-400 h-[80%] w-full md:w-[70%] rounded-br-3xl">
                             <p className="font-bold text-7xl/16 p-3">Women’s Collection</p>
                             <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
                                 <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
@@ -147,7 +167,7 @@ const Home = () => {
 
                     {/* Accessories */}
                     <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-500 text-white h-[80%] w-[70%] rounded-br-3xl">
+                        <div className="relative bg-gray-500 text-white h-[80%] w-full md:w-[70%] rounded-br-3xl">
                             <p className="font-bold text-7xl/16 p-3">Accessories</p>
                             <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
                                 <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-white">
@@ -166,37 +186,56 @@ const Home = () => {
             </section>
 
             {/* Portfolio */}
-            <section id='portfolio' className='w-full px-8 lg:px-20 min-h-screen flex flex-col gap-5 items-center justify-center'>
+            <section id='portfolio' className='w-full px lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
                 <p>Our latest products</p>
-                <div className='flex flex-wrap items-center justify-center w-full py-10'>
+                <div className='flex flex-wrap items-center justify-center py-10'>
                     {images.map((url, idx) => (
                         <Link to={'/catalog'} key={idx}>
                             <img
                                 src={url}
                                 alt={`placeholder-${idx}`}
-                                className='border border-dark overflow-hidden w-40 lg:w-72 h-20 lg:h-56 m-2 rounded-xl object-cover grayscale hover:grayscale-0 cursor-pointer hover:scale-105 transition-all duration-300 active:scale-95'
+                                className='border border-dark overflow-hidden w-[90%] md:w-40 lg:w-72 h-20 lg:h-56 m-2 rounded-xl object-cover grayscale hover:grayscale-0 cursor-pointer hover:scale-105 transition-all duration-300 active:scale-95'
                             />
                         </Link>
                     ))}
                 </div>
             </section>
             {/* Blog */}
-            <section id='blog' className='w-full px-8 lg:px-20 min-h-screen flex flex-col gap-5 items-center justify-center'>
+            <section id='blog' className='w-full px-8 lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
                 <p>Our journals</p>
-                <div className='flex flex-wrap items-center justify-center w-full py-10'>
-                    <Link to={'/blog'} className=' overflow-hidden w-56 m-2 hover:shadow cursor-pointer transition-all duration-300'>
-                        <img
-                            src={usir}
-                            alt={`placeholder`}
-                            className='object-cover w-40 lg:w-72 h-20 lg:h-56'
-                        />
-                        <p className='font-body text-sm font-semibold tracking-wider'>RIVIEW BERITA : USIR PARA JAGOAN!...</p>
-                        <p className='font-body text-xs tracking-wider'> Ada malam ketika musik seharusnya menjadi rumah:
-                            tempat suara menemukan tubuhnya,
-                            dan tubuh menemukan kebebasannya.
-                            Namun di Kota Batu, di sebuah gigs underground,...</p>
-                    </Link>
-
+                <div className='flex flex-wrap items-center justify-around w-full py-10'>
+                    {loadingBlogs ? (
+                        <div className="flex justify-center items-center w-full py-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </div>
+                    ) : blogs.length > 0 ? (
+                        blogs.map((blog) => {
+                            const previewText = blog.content ? blog.content.substring(0, 100) + '...' : '';
+                            return (
+                                <Link
+                                    to={`/blog/${blog._id}`}
+                                    key={blog._id}
+                                    className='overflow-hidden max-w-96 h-56 m-2 hover:shadow cursor-pointer transition-all duration-300 flex items-start justify-around gap-2'
+                                >
+                                    <img
+                                        src={blog.image}
+                                        alt={blog.title}
+                                        className='object-cover w-full h-full'
+                                    />
+                                    <div className='flex flex-col items-start justify-start'>
+                                        <p className='font-body text-sm font-semibold tracking-wider mt-2'>
+                                            {blog.title ? (blog.title.length > 50 ? blog.title.substring(0, 50) + '...' : blog.title) : 'Untitled'}
+                                        </p>
+                                        <p className='font-body text-xs tracking-wider mt-1'>
+                                            {previewText}
+                                        </p>
+                                    </div>
+                                </Link>
+                            );
+                        })
+                    ) : null}
                 </div>
             </section>
             {/* Video section */}
@@ -225,8 +264,8 @@ const Home = () => {
                 )}
             </section>
             {/* CTA */}
-            <div className="h-screen w-full relative font-body">
-                <main className="absolute w-[80%] h-[80%] bg-stone-900 text-white shadow-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="min-h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
+                <main className="bg-dark text-light">
                     <Glare glareColor="#ffffff"
                         glareOpacity={0.3}
                         background='transparent'
@@ -234,27 +273,37 @@ const Home = () => {
                         glareSize={300}
                         transitionDuration={800}
                         playOnce={false}>
-                        <section className="relative w-full h-full">
-                            <p className="absolute left-20 text-center top-10 text-5xl tracking-widest">
-                                Get In touch
-                            </p>
-                            <div className="absolute w-full px-20 text-xs top-40 flex items-start justify-between">
-                                <p className="w-1/3">
-                                    Contact us today and let’s create something extraordinary
-                                    together! We’re excited to collaborate with you
+                        <section className="relative w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-20">
+                            <div className="border-b border-light/50 pb-5 flex flex-col gap-6 md:gap-10">
+                                <p className="text-2xl md:text-3xl lg:text-5xl tracking-widest text-center md:text-left">
+                                    Get In touch
                                 </p>
-                                <button className="footer-btn mr-40">Whatsapp</button>
+                                <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
+                                    <p className="text-xs md:text-sm w-full md:w-1/3 lg:w-1/3">
+                                        Contact us today and let's create something extraordinary
+                                        together! We're excited to collaborate with you
+                                    </p>
+                                    <a
+                                        href='https://wa.me/6287851682131'
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="footer-btn w-full md:w-auto md:mr-0 lg:mr-40 text-center"
+                                    >
+                                        Whatsapp
+                                    </a>
+                                </div>
                             </div>
-                            <div className="border-t-2 absolute bottom-10 flex items-start pt-10 justify-around w-full">
+                            <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
                                 <a
                                     href="https://instagram.com/gloamingmistake"
                                     target="_blank"
-                                    className="w-64 tracking-wider text-xs/5"
+                                    rel="noopener noreferrer"
+                                    className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
                                 >
                                     @gloamingmistake
                                 </a>
-                                <p className="w-64 tracking-wider text-xs/5">+62 812-3217-9590</p>
-                                <p className="w-64 tracking-wider text-xs/5">
+                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
+                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
                                     gloamingmistake@gmail.com
                                 </p>
                             </div>

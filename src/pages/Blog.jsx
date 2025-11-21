@@ -1,87 +1,142 @@
-import React from 'react'
-import blogimage from '../assets/usir.jpg'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { blogAPI } from '../services/api'
+import { Glare } from '../components'
+
 const Blog = () => {
+    const { id } = useParams();
+    const [blog, setBlog] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchBlog = async () => {
+            try {
+                setLoading(true);
+                const data = await blogAPI.getById(id);
+                setBlog(data);
+            } catch (err) {
+                console.error('Error fetching blog:', err);
+                setError('Failed to load blog post');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchBlog();
+        } else {
+            setError('No blog ID provided');
+            setLoading(false);
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <main className='min-h-screen w-full font-body flex items-center justify-center'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </main>
+        );
+    }
+
+    if (error || !blog) {
+        return (
+            <main className='min-h-screen w-full font-body flex flex-col items-center justify-center p-5'>
+                <p className='text-red-600 mb-4'>{error || 'Blog post not found'}</p>
+                <Link to={"/"} className='flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-xl px-5 py-3 hover:bg-neutral-700 transition-colors'>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                    </svg>
+                    Back to Home
+                </Link>
+            </main>
+        );
+    }
+
+    // Format content with line breaks
+    const formatContent = (content) => {
+        if (!content) return '';
+        return content.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+                {line}
+                {index < content.split('\n').length - 1 && <br />}
+            </React.Fragment>
+        ));
+    };
+
     return (
-        <main className='min-h-screen w-full font-body'>
-            <img src={blogimage} alt="" className='w-full h-[80vh] object-cover' />
-            <Link to={"/"} className='absolute left-5 top-5 z-50 flex items-center justify-center gap-2 bg-light rounded-xl px-5 py-3'>
+        <main className='min-h-screen w-full font-body relative'>
+            <img
+                src={blog.image}
+                alt={blog.title}
+                className='w-full h-[80vh] object-cover'
+            />
+            <Link
+                to={"/"}
+                className='absolute left-5 top-5 z-50 flex items-center justify-center gap-2 bg-light rounded-xl px-5 py-3 hover:bg-neutral-100 transition-colors'
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
                 </svg>
                 Back
             </Link>
             <div className='space-y-2 p-5'>
-                <h1 className='text-5xl tracking-widest font-semibold'>RIVIEW BERITA : USIR PARA JAGOAN! – DI ANTARA DENTUM MUSIK DAN BAYANG KEKERASAN KEPADA BAND HUSTTLE
+                <h1 className='text-5xl tracking-widest font-semibold'>
+                    {blog.title}
                 </h1>
-                <p className='text-sm tracking-wide'>
-                    Ada malam ketika musik seharusnya menjadi rumah: <br />
-                    tempat suara menemukan tubuhnya,<br />
-                    dan tubuh menemukan kebebasannya.<br />
-                    Namun di Kota Batu, di sebuah gigs underground,<br />
-                    panggung berubah menjadi batu nisan sementara—<br />
-                    tempat harmoni retak oleh amarah yang tak bernama.<br />
-                    Review ini mencoba menatap peristiwa itu bukan hanya sebagai berita,<br />
-                    melainkan sebagai GETARAN KEMANUSIAAN,<br />
-                    yang terselip di antara dentum drum dan jeritan gitar. Hummmm…. Apakah, nyawa tidak terlalu berharga bagimu? (PEMBAC*K)<br />
-                    Pada 16 November 2025,<br />
-                    di Plum Hotel Palereman,<br />
-                    band Husttle menaikkan semangat tiga lagu,<br />
-                    hingga tiba-tiba badai manusia datang tanpa aba-aba.<br />
-                    Irmanda Putra, sang vokalis,<br />
-                    diserang oleh sekelompok pemuda dari kerumunan.<br />
-                    Regi—bassis yang melihat temannya direnggut kekacauan—<br />
-                    mencoba melerai dengan kalimat sederhana<br />
-                    yang biasanya cukup untuk menghentikan konflik kecil dalam skena:<br />
-                    “Mas, jangan… itu temanku.”<br />
-                    Namun malam itu tak mendengar.<br />
-                    Keduanya dikeroyok.<br />
-                    Irmanda dibacok dari belakang saat diajak “damai”.<br />
-                    Regi jatuh, diinjak, pingsan, lalu sadar di depan rumah warga.<br />
-                    Kekerasan itu tajam, bukan hanya senjatanya,<br />
-                    tetapi juga pengkhianatan ruang yang seharusnya aman.<br />
-                    Skena underground telah lama menjadi rumah mereka<br />
-                    yang ditolak, tak didengar, atau terlalu jujur bagi dunia.<br />
-                    Di sana, moshing dan pit bukan kekerasan—<br />
-                    itu ritual, bahasa tubuh solidaritas.<br />
-                    Namun malam itu,<br />
-                    budaya itu dirampas dan diganti dengan agresi yang tidak punya ritme.<br />
-                    Kekerasan masuk ke ruang seni seperti coretan vandal<br />
-                    pada mural yang sedang dikerjakan.<br />
-                    Fenomena ini mengungkap satu hal:<br />
-                    anak-anak muda yang belum selesai belajar hidup<br />
-                    masuk ke ruang yang seharusnya tempat mereka belajar menghargai hidup.<br />
-                    Delapan pelaku diamankan, beberapa di antaranya masih pelajar—<br />
-                    dan itu menyentuh sisi gelap dari realitas bahwa<br />
-                    kemarahan sering lahir lebih cepat daripada kebijaksanaan.<br />
-                    Tragedi ini bukan hanya kriminalitas,<br />
-                    tapi juga alarm bagi ekosistem budaya alternatif:<br />
-                    betapa rapuhnya ruang aman bagi kreativitas,<br />
-                    dan betapa mudahnya ia dicabik oleh ego dan dendam.<br />
-                    Ada luka yang tidak terlihat oleh kamera berita:<br />
-                    luka pada komunitas,<br />
-                    luka pada kepercayaan antara penonton dan panggung,<br />
-                    luka pada pemahaman bahwa musik bisa melindungi.<br />
-                    Irmanda menanggung bekas bacokan,<br />
-                    Regi membawa memar,<br />
-                    tetapi yang paling menyakitkan adalah<br />
-                    bahwa malam itu membuktikan<br />
-                    bahwa seni pun bisa diserang dari punggungnya sendiri.<br />
-                    Namun para seniman selalu bangkit:<br />
-                    dari amplop amplop kecil honor yang tidak seberapa,<br />
-                    dari ruang latihan panas,<br />
-                    dari panggung improvisasi,<br />
-                    dan kini—dari tragedi.<br />
-                    Semoga malam-malam gigs berikutnya<br />
-                    kembali menjadi altar suara, bukan arena luka.<br />
-                    Semoga setiap anak muda yang datang<br />
-                    meninggalkan amarah di depan pintu,<br />
-                    dan membawa pulang hanya keringat serta cerita.<br />
-                    Dan semoga luka Irmanda & Regi<br />
-                    menjadi catatan keras<br />
-                    bahwa musik bukan tempat kematian,<br />
-                    melainkan tempat kita belajar menjadi manusia.
+                <p className='text-sm tracking-wide whitespace-pre-line'>
+                    {formatContent(blog.content)}
                 </p>
+            </div>
+            {/* CTA */}
+            <div className="min-h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
+                <main className="bg-dark text-light">
+                    <Glare glareColor="#ffffff"
+                        glareOpacity={0.3}
+                        background='transparent'
+                        glareAngle={-30}
+                        glareSize={300}
+                        transitionDuration={800}
+                        playOnce={false}>
+                        <section className="relative w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-20">
+                            <div className="border-b border-light/50 pb-5 flex flex-col gap-6 md:gap-10">
+                                <p className="text-2xl md:text-3xl lg:text-5xl tracking-widest text-center md:text-left">
+                                    Get In touch
+                                </p>
+                                <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
+                                    <p className="text-xs md:text-sm w-full md:w-1/3 lg:w-1/3">
+                                        Contact us today and let's create something extraordinary
+                                        together! We're excited to collaborate with you
+                                    </p>
+                                    <a
+                                        href='https://wa.me/6287851682131'
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="footer-btn w-full md:w-auto md:mr-0 lg:mr-40 text-center"
+                                    >
+                                        Whatsapp
+                                    </a>
+                                </div>
+                            </div>
+                            <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
+                                <a
+                                    href="https://instagram.com/gloamingmistake"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
+                                >
+                                    @gloamingmistake
+                                </a>
+                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
+                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
+                                    gloamingmistake@gmail.com
+                                </p>
+                            </div>
+                        </section>
+                    </Glare>
+                </main>
             </div>
         </main>
     )

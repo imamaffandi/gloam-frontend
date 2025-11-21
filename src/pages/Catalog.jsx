@@ -67,7 +67,7 @@ const Catalog = () => {
                                 {product.images && product.images.length > 0 ? (
                                     <img
                                         src={product.images[0]}
-                                        className='w-full h-full object-cover'
+                                        className='w-full h-full object-contain'
                                         alt={product.name}
                                     />
                                 ) : (
@@ -113,8 +113,8 @@ const Catalog = () => {
                     ))
                 )}
                 {/* CTA */}
-                <div className="h-screen w-full relative font-body">
-                    <main className="absolute w-[80%] h-[80%] bg-stone-900 text-white shadow-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="min-h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
+                    <main className="bg-dark text-light">
                         <Glare glareColor="#ffffff"
                             glareOpacity={0.3}
                             background='transparent'
@@ -122,27 +122,37 @@ const Catalog = () => {
                             glareSize={300}
                             transitionDuration={800}
                             playOnce={false}>
-                            <section className="relative w-full h-full">
-                                <p className="absolute left-20 text-center top-10 text-5xl tracking-widest">
-                                    Get In touch
-                                </p>
-                                <div className="absolute w-full px-20 text-xs top-40 flex items-start justify-between">
-                                    <p className="w-1/3">
-                                        Contact us today and let’s create something extraordinary
-                                        together! We’re excited to collaborate with you
+                            <section className="relative w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-20">
+                                <div className="border-b border-light/50 pb-5 flex flex-col gap-6 md:gap-10">
+                                    <p className="text-2xl md:text-3xl lg:text-5xl tracking-widest text-center md:text-left">
+                                        Get In touch
                                     </p>
-                                    <button className="footer-btn mr-40">Whatsapp</button>
+                                    <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
+                                        <p className="text-xs md:text-sm w-full md:w-1/3 lg:w-1/3">
+                                            Contact us today and let's create something extraordinary
+                                            together! We're excited to collaborate with you
+                                        </p>
+                                        <a
+                                            href='https://wa.me/6287851682131'
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="footer-btn w-full md:w-auto md:mr-0 lg:mr-40 text-center"
+                                        >
+                                            Whatsapp
+                                        </a>
+                                    </div>
                                 </div>
-                                <div className="border-t-2 absolute bottom-10 flex items-start pt-10 justify-around w-full">
+                                <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
                                     <a
                                         href="https://instagram.com/gloamingmistake"
                                         target="_blank"
-                                        className="w-64 tracking-wider text-xs/5"
+                                        rel="noopener noreferrer"
+                                        className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
                                     >
                                         @gloamingmistake
                                     </a>
-                                    <p className="w-64 tracking-wider text-xs/5">+62 812-3217-9590</p>
-                                    <p className="w-64 tracking-wider text-xs/5">
+                                    <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
+                                    <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
                                         gloamingmistake@gmail.com
                                     </p>
                                 </div>

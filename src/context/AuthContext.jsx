@@ -25,8 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = (username, password) => {
         // Simple authentication - in production, this should be done via backend API
-        // Default credentials: username: admin, password: admin123
-        if (username === 'gloamadmin' && password === 'iBT714{2B?{Y') {
+        if (username === 'gloamadmin' && password === 'passwordadmingloam') {
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
             return true;
