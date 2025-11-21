@@ -354,20 +354,20 @@ const Admin = () => {
         <div className="bg-neutral-50 min-h-screen w-full font-body text-neutral-800">
             {/* Header */}
             <header className="sticky top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-10 border-b border-neutral-200">
-                <div className="w-full px-8 py-5 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+                <div className="w-full px-4 md:px-8 py-4 md:py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900">
                         Gloam Admin
                     </h1>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                         <button
                             onClick={() => setShowBlogForm(true)}
-                            className="px-6 py-3 rounded-lg bg-neutral-800 text-white font-medium hover:bg-neutral-600 transition-all shadow-md active:scale-95"
+                            className="px-4 md:px-6 py-2 md:py-3 rounded-lg bg-neutral-800 text-white text-sm md:text-base font-medium hover:bg-neutral-600 transition-all shadow-md active:scale-95"
                         >
                             Generate Blog
                         </button>
                         <button
                             onClick={() => setShowForm(true)}
-                            className="px-6 py-3 rounded-lg bg-neutral-900 text-white font-medium hover:bg-neutral-700 transition-all shadow-md active:scale-95"
+                            className="px-4 md:px-6 py-2 md:py-3 rounded-lg bg-neutral-900 text-white text-sm md:text-base font-medium hover:bg-neutral-700 transition-all shadow-md active:scale-95"
                         >
                             + Add Product
                         </button>
@@ -375,32 +375,32 @@ const Admin = () => {
                 </div>
             </header>
 
-            <main className="container mx-auto px-6 py-10 space-y-10">
+            <main className="container mx-auto px-4 md:px-6 py-6 md:py-10 space-y-6 md:space-y-10">
                 {/* Product List */}
                 <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
-                    <div className="flex items-center justify-between p-6 border-b border-neutral-100">
-                        <h2 className="text-2xl font-semibold text-neutral-900">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 p-4 md:p-6 border-b border-neutral-100">
+                        <h2 className="text-xl md:text-2xl font-semibold text-neutral-900">
                             Product Inventory
                         </h2>
-                        <p className="text-sm text-neutral-500">
+                        <p className="text-xs md:text-sm text-neutral-500">
                             {products.length} {products.length === 1 ? "item" : "items"}
                         </p>
                     </div>
 
                     {products.length === 0 ? (
-                        <div className="p-12 text-center text-neutral-500">
+                        <div className="p-8 md:p-12 text-center text-neutral-500 text-sm md:text-base">
                             No products found. Create your first one!
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                            <table className="w-full border-collapse min-w-[640px]">
                                 <thead className="bg-neutral-100 text-neutral-600">
                                     <tr>
                                         {["Name", "Category", "Price", "Stock", "Status", "Actions"].map(
                                             (h) => (
                                                 <th
                                                     key={h}
-                                                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
+                                                    className="px-3 md:px-6 py-2 md:py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
                                                 >
                                                     {h}
                                                 </th>
@@ -414,13 +414,13 @@ const Admin = () => {
                                             key={product._id}
                                             className="hover:bg-neutral-50 transition-all"
                                         >
-                                            <td className="px-6 py-4 font-medium">{product.name}</td>
-                                            <td className="px-6 py-4">{product.category}</td>
-                                            <td className="px-6 py-4">${product.price}</td>
-                                            <td className="px-6 py-4">{product.stock}</td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base font-medium">{product.name}</td>
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base">{product.category}</td>
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base">${product.price}</td>
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base">{product.stock}</td>
+                                            <td className="px-3 md:px-6 py-3 md:py-4">
                                                 <span
-                                                    className={`px-3 py-1 text-xs font-semibold rounded-full ${product.isAvailable
+                                                    className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-full ${product.isAvailable
                                                         ? "bg-green-100 text-green-700"
                                                         : "bg-red-100 text-red-700"
                                                         }`}
@@ -428,11 +428,11 @@ const Admin = () => {
                                                     {product.isAvailable ? "Available" : "Unavailable"}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-sm font-medium flex gap-3">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium flex flex-col sm:flex-row gap-1 sm:gap-3">
                                                 <button
                                                     onClick={() => handleEdit(product)}
                                                     disabled={deleting[product._id]}
-                                                    className="text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    className="text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left sm:text-center"
                                                 >
                                                     Edit
                                                 </button>
@@ -443,10 +443,10 @@ const Admin = () => {
                                                 >
                                                     {deleting[product._id] ? (
                                                         <>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-4 md:size-6 animate-spin">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                                             </svg>
-                                                            Deleting...
+                                                            <span className="hidden sm:inline">Deleting...</span>
                                                         </>
                                                     ) : (
                                                         'Delete'
@@ -463,29 +463,29 @@ const Admin = () => {
 
                 {/* Blog List */}
                 <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
-                    <div className="flex items-center justify-between p-6 border-b border-neutral-100">
-                        <h2 className="text-2xl font-semibold text-neutral-900">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 p-4 md:p-6 border-b border-neutral-100">
+                        <h2 className="text-xl md:text-2xl font-semibold text-neutral-900">
                             Blog Posts
                         </h2>
-                        <p className="text-sm text-neutral-500">
+                        <p className="text-xs md:text-sm text-neutral-500">
                             {blogs.length} {blogs.length === 1 ? "post" : "posts"}
                         </p>
                     </div>
 
                     {blogs.length === 0 ? (
-                        <div className="p-12 text-center text-neutral-500">
+                        <div className="p-8 md:p-12 text-center text-neutral-500 text-sm md:text-base">
                             No blogs found. Create your first one!
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                            <table className="w-full border-collapse min-w-[640px]">
                                 <thead className="bg-neutral-100 text-neutral-600">
                                     <tr>
                                         {["Title", "Preview", "Created", "Actions"].map(
                                             (h) => (
                                                 <th
                                                     key={h}
-                                                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
+                                                    className="px-3 md:px-6 py-2 md:py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-neutral-200"
                                                 >
                                                     {h}
                                                 </th>
@@ -499,24 +499,24 @@ const Admin = () => {
                                             key={blog._id}
                                             className="hover:bg-neutral-50 transition-all"
                                         >
-                                            <td className="px-6 py-4 font-medium max-w-xs truncate">{blog.title}</td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base font-medium max-w-xs truncate">{blog.title}</td>
+                                            <td className="px-3 md:px-6 py-3 md:py-4">
                                                 {blog.image ? (
                                                     <img
                                                         src={blog.image}
                                                         alt={blog.title}
-                                                        className="w-16 h-16 object-cover rounded-lg"
+                                                        className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg"
                                                     />
                                                 ) : (
-                                                    <div className="w-16 h-16 bg-neutral-200 rounded-lg flex items-center justify-center text-neutral-400 text-xs">
+                                                    <div className="w-12 h-12 md:w-16 md:h-16 bg-neutral-200 rounded-lg flex items-center justify-center text-neutral-400 text-xs">
                                                         No Image
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-neutral-500">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-500">
                                                 {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'N/A'}
                                             </td>
-                                            <td className="px-6 py-4 text-sm font-medium">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium">
                                                 <button
                                                     onClick={() => handleDeleteBlog(blog._id)}
                                                     disabled={deletingBlog[blog._id]}
@@ -527,7 +527,7 @@ const Admin = () => {
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-4 animate-spin">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                                             </svg>
-                                                            Deleting...
+                                                            <span className="hidden sm:inline">Deleting...</span>
                                                         </>
                                                     ) : (
                                                         'Delete'
@@ -545,21 +545,21 @@ const Admin = () => {
 
             {/* MODAL FORM */}
             {showForm && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 relative">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4">
+                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 md:p-6 lg:p-8 relative">
                         <button
                             onClick={resetForm}
-                            className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800 text-2xl"
+                            className="absolute top-3 md:top-4 right-3 md:right-4 text-neutral-500 hover:text-neutral-800 text-xl md:text-2xl"
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-semibold mb-6 text-neutral-900">
+                        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-neutral-900 pr-8">
                             {editingProduct ? "Edit Product" : "Create New Product"}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                             {/* Inputs */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                 <div>
                                     <label className=" text-sm font-medium text-neutral-700 mb-2">
                                         Product Name *
@@ -719,7 +719,7 @@ const Admin = () => {
                                 {/* Main Preview */}
                                 {imagePreviews.length > 0 && (
                                     <div className="mt-4">
-                                        <div className="relative w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                        <div className="relative w-full h-48 md:h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
                                             <img
                                                 src={imagePreviews[0].src}
                                                 alt="Main preview"
@@ -765,19 +765,19 @@ const Admin = () => {
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex justify-end gap-4 pt-6">
+                            <div className="flex flex-col sm:flex-row justify-end gap-3 md:gap-4 pt-4 md:pt-6">
                                 <button
                                     type="button"
                                     onClick={resetForm}
                                     disabled={submitting}
-                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 md:px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center"
+                                    className="px-4 md:px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center text-sm md:text-base"
                                 >
                                     {submitting ? (
                                         <>
@@ -796,19 +796,19 @@ const Admin = () => {
 
             {/* BLOG MODAL FORM */}
             {showBlogForm && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 relative">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4">
+                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 md:p-6 lg:p-8 relative">
                         <button
                             onClick={resetBlogForm}
-                            className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800 text-2xl"
+                            className="absolute top-3 md:top-4 right-3 md:right-4 text-neutral-500 hover:text-neutral-800 text-xl md:text-2xl"
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-semibold mb-6 text-neutral-900">
+                        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-neutral-900 pr-8">
                             Create New Blog
                         </h2>
 
-                        <form onSubmit={handleBlogSubmit} className="space-y-6">
+                        <form onSubmit={handleBlogSubmit} className="space-y-4 md:space-y-6">
                             {/* Title */}
                             <div>
                                 <label className="text-sm font-medium text-neutral-700 mb-2 ">
@@ -843,7 +843,7 @@ const Admin = () => {
                                 {/* Image Preview */}
                                 {blogImagePreview && (
                                     <div className="mt-4">
-                                        <div className="relative w-full h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                        <div className="relative w-full h-48 md:h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
                                             <img
                                                 src={blogImagePreview.src}
                                                 alt="Blog preview"
@@ -879,19 +879,19 @@ const Admin = () => {
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex justify-end gap-4 pt-6">
+                            <div className="flex flex-col sm:flex-row justify-end gap-3 md:gap-4 pt-4 md:pt-6">
                                 <button
                                     type="button"
                                     onClick={resetBlogForm}
                                     disabled={submittingBlog}
-                                    className="px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 md:px-6 py-2 rounded-lg border border-neutral-300 hover:bg-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submittingBlog}
-                                    className="px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center"
+                                    className="px-4 md:px-6 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[140px] justify-center text-sm md:text-base"
                                 >
                                     {submittingBlog ? (
                                         <>

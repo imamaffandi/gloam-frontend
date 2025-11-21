@@ -113,7 +113,7 @@ const Catalog = () => {
                     ))
                 )}
                 {/* CTA */}
-                <div className="min-h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
+                <div className="h-fit md:h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
                     <main className="bg-dark text-light">
                         <Glare glareColor="#ffffff"
                             glareOpacity={0.3}
