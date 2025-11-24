@@ -217,14 +217,14 @@ const Home = () => {
                                 <Link
                                     to={`/blog/${blog._id}`}
                                     key={blog._id}
-                                    className='overflow-hidden max-w-96 h-56 m-2 hover:shadow cursor-pointer transition-all duration-300 flex items-start justify-around gap-2'
+                                    className='overflow-hidden w-96 h-56 m-2 hover:shadow cursor-pointer transition-all duration-300 flex items-start justify-around gap-2'
                                 >
                                     <img
                                         src={blog.image}
                                         alt={blog.title}
-                                        className='object-cover w-full h-full'
+                                        className='object-cover w-1/2 h-full'
                                     />
-                                    <div className='flex flex-col items-start justify-start'>
+                                    <div className='w-1/2 flex flex-col items-start justify-start'>
                                         <p className='font-body text-sm font-semibold tracking-wider mt-2'>
                                             {blog.title ? (blog.title.length > 50 ? blog.title.substring(0, 50) + '...' : blog.title) : 'Untitled'}
                                         </p>
