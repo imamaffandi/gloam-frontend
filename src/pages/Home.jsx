@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useMemo } from 'react'
 import gsap from 'gsap';
 import { Hero, SplitText, ImageCarousel } from '../components';
 import { Glare } from '../components'
@@ -6,9 +6,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useGSAP } from '@gsap/react';
 // Import carousel images
-import { img1, img2, img3, video1, video2, video3, b, c, d, e, f, g, i } from '../assets';
+import { img1, img2, img3, video1, video2, video3 } from '../assets';
 import { Link } from 'react-router-dom';
-import { blogAPI } from '../services/api';
+import { blogAPI, productAPI } from '../services/api';
+import { useLoading } from '../context/LoadingContext';
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
 // Carousel images array
@@ -16,11 +17,22 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 const Home = () => {
     const videoRefs = useRef([]);
     const mainRef = useRef()
-    const carouselImages = [img1, img2, img3];
-    const images = [b, c, d, e, f, g, i]
-    const videos = [video1, video2, video3];
+    const carouselImages = useMemo(() => [img1, img2, img3], []);
+    const videos = useMemo(() => [video1, video2, video3], []);
     const [blogs, setBlogs] = useState([]);
     const [loadingBlogs, setLoadingBlogs] = useState(true);
+    const [products, setProducts] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [imagesLoaded, setImagesLoaded] = useState(false);
+    const [videosLoaded, setVideosLoaded] = useState(false);
+    const { setIsLoading } = useLoading();
+
+    // Reset loading state when component mounts
+    useEffect(() => {
+        setIsLoading(true);
+        setImagesLoaded(false);
+        setVideosLoaded(false);
+    }, [setIsLoading]);
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.defaults({ ease: "power1.in", duration: 2 });
@@ -64,6 +76,119 @@ const Home = () => {
 
         fetchBlogs();
     }, []);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoadingProducts(true);
+                const data = await productAPI.getAvailable();
+                setProducts(data);
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                // Don't show error, just use empty array
+                setProducts([]);
+            } finally {
+                setLoadingProducts(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    // Track carousel images loading
+    useEffect(() => {
+        let loadedCount = 0;
+        const totalImages = carouselImages.length;
+
+        if (totalImages === 0) {
+            setImagesLoaded(true);
+            return;
+        }
+
+        const imagePromises = carouselImages.map((src) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === totalImages) {
+                        setImagesLoaded(true);
+                    }
+                    resolve();
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === totalImages) {
+                        setImagesLoaded(true);
+                    }
+                    resolve();
+                };
+                img.src = src;
+            });
+        });
+
+        Promise.all(imagePromises);
+    }, [carouselImages]);
+
+    // Track videos loading
+    useEffect(() => {
+        if (videos.length === 0) {
+            setVideosLoaded(true);
+            return;
+        }
+
+        let loadedCount = 0;
+        const totalVideos = videos.length;
+
+        const checkVideosLoaded = () => {
+            loadedCount++;
+            if (loadedCount === totalVideos) {
+                setVideosLoaded(true);
+            }
+        };
+
+        // Wait a bit for video refs to be set
+        const timer = setTimeout(() => {
+            videoRefs.current.forEach((video) => {
+                if (video) {
+                    if (video.readyState >= 2) {
+                        // Video already loaded
+                        checkVideosLoaded();
+                    } else {
+                        video.addEventListener('loadeddata', checkVideosLoaded, { once: true });
+                        video.addEventListener('error', checkVideosLoaded, { once: true });
+                    }
+                } else {
+                    // If video ref not set yet, count it as loaded to avoid blocking
+                    checkVideosLoaded();
+                }
+            });
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, [videos]);
+
+    // Check if everything is fully loaded and update global loading state
+    useEffect(() => {
+        const allDataLoaded = !loadingBlogs && !loadingProducts;
+        const allAssetsLoaded = imagesLoaded && videosLoaded;
+
+        if (allDataLoaded && allAssetsLoaded) {
+            // Small delay to ensure smooth transition
+            const timer = setTimeout(() => {
+                setIsLoading(false);
+            }, 500);
+            return () => clearTimeout(timer);
+        } else {
+            setIsLoading(true);
+        }
+    }, [loadingBlogs, loadingProducts, imagesLoaded, videosLoaded, setIsLoading]);
+
+    // Reset loading state when component unmounts
+    useEffect(() => {
+        return () => {
+            setIsLoading(true);
+        };
+    }, [setIsLoading]);
     return (
         <main className="mx-auto font-body h-full">
             {/* Hero */}
@@ -189,15 +314,34 @@ const Home = () => {
             <section id='portfolio' className='w-full px lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
                 <p>Our latest products</p>
                 <div className='flex flex-wrap items-center justify-center py-10'>
-                    {images.map((url, idx) => (
-                        <Link to={'/catalog'} key={idx}>
-                            <img
-                                src={url}
-                                alt={`placeholder-${idx}`}
-                                className='border border-dark overflow-hidden w-[90%] md:w-40 lg:w-72 h-20 lg:h-56 m-2 rounded-xl object-cover grayscale hover:grayscale-0 cursor-pointer hover:scale-105 transition-all duration-300 active:scale-95'
-                            />
-                        </Link>
-                    ))}
+                    {loadingProducts ? (
+                        <div className="flex justify-center items-center w-full py-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </div>
+                    ) : products.length > 0 ? (
+                        products.map((product) => {
+                            // Get the first image from the product's images array
+                            const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
+
+                            if (!productImage) return null;
+
+                            return (
+                                <Link to={'/catalog'} key={product._id}>
+                                    <img
+                                        src={productImage}
+                                        alt={product.name || `Product ${product._id}`}
+                                        className='border border-dark overflow-hidden w-[90%] md:w-40 lg:w-72 h-20 lg:h-56 m-2 rounded-xl object-cover grayscale hover:grayscale-0 cursor-pointer hover:scale-105 transition-all duration-300 active:scale-95'
+                                    />
+                                </Link>
+                            );
+                        })
+                    ) : (
+                        <div className="w-full text-center py-10 text-neutral-500">
+                            No products available at the moment.
+                        </div>
+                    )}
                 </div>
             </section>
             {/* Blog */}

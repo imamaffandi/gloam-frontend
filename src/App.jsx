@@ -1,8 +1,9 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
+import { LoadingProvider } from './context/LoadingContext';
 import { Navbar, ProtectedRoute, SmoothScroll } from './components';
-import { Home, Login, Admin, Catalog, Contact, Blog } from './pages';
+import { Home, Login, Admin, Catalog, Contact, Blog, Loading } from './pages';
 import Transition from './utils/Transition'
 
 const AppContent = () => {
@@ -12,6 +13,7 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen">
+      {location.pathname === '/' && <Loading />}
       <SmoothScroll />
       {!shouldHideNavbar && (
         <Navbar
@@ -55,7 +57,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <AppContent />
+      <LoadingProvider>
+        <AppContent />
+      </LoadingProvider>
     </AuthProvider>
   )
 }
