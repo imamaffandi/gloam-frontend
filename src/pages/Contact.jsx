@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./Contact.css"
+import { useLoading } from '../context/LoadingContext';
 
 const Contact = () => {
-
+    const { setIsLoading } = useLoading();
     const [form, setForm] = useState({ name: '', email: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
+
+    // Ensure loading is off when Contact page mounts
+    useEffect(() => {
+        setIsLoading(false);
+    }, [setIsLoading]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

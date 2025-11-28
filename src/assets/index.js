@@ -1,37 +1,9 @@
-import foto1 from "./images/foto1.webp";
-import foto2 from "./images/foto2.webp";
-import foto3 from "./images/foto3.webp";
-import b from "./images/b.webp";
-import c from "./images/c.webp";
-import d from "./images/d.webp";
-import e from "./images/e.webp";
-import f from "./images/f.webp";
-import g from "./images/g.webp";
-import i from "./images/i.webp";
-
 import video1 from "./video/1.webm";
 import video2 from "./video/2.webm";
 import video3 from "./video/3.webm";
 
-import img1 from "./1.jpeg";
-import img2 from "./2.jpeg";
-import img3 from "./3.jpeg";
+import img1 from "./images/1.webp";
+import img2 from "./images/2.webp";
+import img3 from "./images/3.webp";
 
-export {
-  foto1,
-  foto2,
-  foto3,
-  img1,
-  img2,
-  img3,
-  b,
-  c,
-  d,
-  e,
-  f,
-  g,
-  i,
-  video1,
-  video2,
-  video3,
-};
+export { img1, img2, img3, video1, video2, video3 };

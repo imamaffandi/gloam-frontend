@@ -13,7 +13,7 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen">
-      {location.pathname === '/' && <Loading />}
+      <Loading />
       <SmoothScroll />
       {!shouldHideNavbar && (
         <Navbar

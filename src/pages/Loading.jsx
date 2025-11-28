@@ -1,10 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useLoading } from '../context/LoadingContext';
 
 const Loading = () => {
-    const location = useLocation();
     const containerRef = useRef(null);
     const logoRef = useRef(null);
     const { isLoading } = useLoading();
@@ -46,11 +44,6 @@ const Loading = () => {
             gsap.set(logoRef.current, { scale: 1, opacity: 1 });
         }
     }, [isLoading]);
-
-    // Only show on home route
-    if (location.pathname !== '/') {
-        return null;
-    }
 
     if (!shouldRender) return null;
 

@@ -63,6 +63,7 @@ const Home = () => {
         const fetchBlogs = async () => {
             try {
                 setLoadingBlogs(true);
+                setIsLoading(true);
                 const data = await blogAPI.getAll();
                 setBlogs(data);
             } catch (err) {
@@ -75,12 +76,13 @@ const Home = () => {
         };
 
         fetchBlogs();
-    }, []);
+    }, [setIsLoading]);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoadingProducts(true);
+                setIsLoading(true);
                 const data = await productAPI.getAvailable();
                 setProducts(data);
             } catch (err) {
@@ -93,12 +95,13 @@ const Home = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, [setIsLoading]);
 
     // Track carousel images loading
     useEffect(() => {
         let loadedCount = 0;
         const totalImages = carouselImages.length;
+        let isCompleted = false;
 
         if (totalImages === 0) {
             setImagesLoaded(true);
@@ -109,16 +112,22 @@ const Home = () => {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === totalImages) {
-                        setImagesLoaded(true);
+                    if (!isCompleted) {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            isCompleted = true;
+                            setImagesLoaded(true);
+                        }
                     }
                     resolve();
                 };
                 img.onerror = () => {
-                    loadedCount++;
-                    if (loadedCount === totalImages) {
-                        setImagesLoaded(true);
+                    if (!isCompleted) {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            isCompleted = true;
+                            setImagesLoaded(true);
+                        }
                     }
                     resolve();
                 };
@@ -127,6 +136,16 @@ const Home = () => {
         });
 
         Promise.all(imagePromises);
+
+        // Fallback timeout: if images don't load within 5 seconds, mark as loaded
+        const fallbackTimer = setTimeout(() => {
+            if (!isCompleted) {
+                isCompleted = true;
+                setImagesLoaded(true);
+            }
+        }, 5000);
+
+        return () => clearTimeout(fallbackTimer);
     }, [carouselImages]);
 
     // Track videos loading
@@ -138,33 +157,52 @@ const Home = () => {
 
         let loadedCount = 0;
         const totalVideos = videos.length;
+        let isCompleted = false;
 
         const checkVideosLoaded = () => {
+            if (isCompleted) return;
             loadedCount++;
             if (loadedCount === totalVideos) {
+                isCompleted = true;
                 setVideosLoaded(true);
             }
         };
 
         // Wait a bit for video refs to be set
         const timer = setTimeout(() => {
-            videoRefs.current.forEach((video) => {
-                if (video) {
-                    if (video.readyState >= 2) {
-                        // Video already loaded
-                        checkVideosLoaded();
-                    } else {
-                        video.addEventListener('loadeddata', checkVideosLoaded, { once: true });
-                        video.addEventListener('error', checkVideosLoaded, { once: true });
-                    }
-                } else {
-                    // If video ref not set yet, count it as loaded to avoid blocking
+            const refs = videoRefs.current;
+            const validRefs = refs.filter(ref => ref !== null && ref !== undefined);
+
+            // If no valid refs found, mark as loaded to avoid blocking
+            if (validRefs.length === 0) {
+                setVideosLoaded(true);
+                return;
+            }
+
+            validRefs.forEach((video) => {
+                if (video.readyState >= 2) {
+                    // Video already loaded
                     checkVideosLoaded();
+                } else {
+                    video.addEventListener('loadeddata', checkVideosLoaded, { once: true });
+                    video.addEventListener('error', checkVideosLoaded, { once: true });
+                    video.addEventListener('canplay', checkVideosLoaded, { once: true });
                 }
             });
-        }, 100);
+        }, 500);
 
-        return () => clearTimeout(timer);
+        // Fallback timeout: if videos don't load within 5 seconds, mark as loaded
+        const fallbackTimer = setTimeout(() => {
+            if (!isCompleted) {
+                isCompleted = true;
+                setVideosLoaded(true);
+            }
+        }, 5000);
+
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(fallbackTimer);
+        };
     }, [videos]);
 
     // Check if everything is fully loaded and update global loading state
@@ -178,16 +216,19 @@ const Home = () => {
                 setIsLoading(false);
             }, 500);
             return () => clearTimeout(timer);
-        } else {
+        } else if (loadingBlogs || loadingProducts) {
+            // Keep loading state true while fetching data
             setIsLoading(true);
         }
     }, [loadingBlogs, loadingProducts, imagesLoaded, videosLoaded, setIsLoading]);
 
-    // Reset loading state when component unmounts
+    // Maximum loading time fallback (10 seconds)
     useEffect(() => {
-        return () => {
-            setIsLoading(true);
-        };
+        const maxLoadingTimer = setTimeout(() => {
+            setIsLoading(false);
+        }, 10000);
+
+        return () => clearTimeout(maxLoadingTimer);
     }, [setIsLoading]);
     return (
         <main className="mx-auto font-body h-full">
@@ -314,13 +355,7 @@ const Home = () => {
             <section id='portfolio' className='w-full px lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
                 <p>Our latest products</p>
                 <div className='flex flex-wrap items-center justify-center py-10'>
-                    {loadingProducts ? (
-                        <div className="flex justify-center items-center w-full py-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                        </div>
-                    ) : products.length > 0 ? (
+                    {products.length > 0 ? (
                         products.map((product) => {
                             // Get the first image from the product's images array
                             const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
@@ -348,13 +383,7 @@ const Home = () => {
             <section id='blog' className='w-full px-8 lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
                 <p>Our journals</p>
                 <div className='flex flex-wrap items-center justify-around w-full py-10'>
-                    {loadingBlogs ? (
-                        <div className="flex justify-center items-center w-full py-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                        </div>
-                    ) : blogs.length > 0 ? (
+                    {blogs.length > 0 ? (
                         blogs.map((blog) => {
                             const previewText = blog.content ? blog.content.substring(0, 100) + '...' : '';
                             return (
