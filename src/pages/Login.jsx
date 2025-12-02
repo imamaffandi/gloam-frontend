@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLoading } from '../context/LoadingContext';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const { login } = useAuth();
+    const { setIsLoading } = useLoading();
     const navigate = useNavigate();
+
+    // Ensure loading is off when Login page mounts
+    useEffect(() => {
+        setIsLoading(false);
+    }, [setIsLoading]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -45,8 +52,6 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)} />
                 <button type='submit' className="w-full h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign in</button>
             </form>
-            {/* </div>
-            </div> */}
         </div>
     );
 };

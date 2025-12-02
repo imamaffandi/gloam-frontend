@@ -15,7 +15,6 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 // Carousel images array
 
 const Home = () => {
-    const videoRefs = useRef([]);
     const mainRef = useRef()
     const carouselImages = useMemo(() => [img1, img2, img3], []);
     const videos = useMemo(() => [video1, video2, video3], []);
@@ -24,14 +23,12 @@ const Home = () => {
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [imagesLoaded, setImagesLoaded] = useState(false);
-    const [videosLoaded, setVideosLoaded] = useState(false);
     const { setIsLoading } = useLoading();
 
     // Reset loading state when component mounts
     useEffect(() => {
         setIsLoading(true);
         setImagesLoaded(false);
-        setVideosLoaded(false);
     }, [setIsLoading]);
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -148,67 +145,10 @@ const Home = () => {
         return () => clearTimeout(fallbackTimer);
     }, [carouselImages]);
 
-    // Track videos loading
-    useEffect(() => {
-        if (videos.length === 0) {
-            setVideosLoaded(true);
-            return;
-        }
-
-        let loadedCount = 0;
-        const totalVideos = videos.length;
-        let isCompleted = false;
-
-        const checkVideosLoaded = () => {
-            if (isCompleted) return;
-            loadedCount++;
-            if (loadedCount === totalVideos) {
-                isCompleted = true;
-                setVideosLoaded(true);
-            }
-        };
-
-        // Wait a bit for video refs to be set
-        const timer = setTimeout(() => {
-            const refs = videoRefs.current;
-            const validRefs = refs.filter(ref => ref !== null && ref !== undefined);
-
-            // If no valid refs found, mark as loaded to avoid blocking
-            if (validRefs.length === 0) {
-                setVideosLoaded(true);
-                return;
-            }
-
-            validRefs.forEach((video) => {
-                if (video.readyState >= 2) {
-                    // Video already loaded
-                    checkVideosLoaded();
-                } else {
-                    video.addEventListener('loadeddata', checkVideosLoaded, { once: true });
-                    video.addEventListener('error', checkVideosLoaded, { once: true });
-                    video.addEventListener('canplay', checkVideosLoaded, { once: true });
-                }
-            });
-        }, 500);
-
-        // Fallback timeout: if videos don't load within 5 seconds, mark as loaded
-        const fallbackTimer = setTimeout(() => {
-            if (!isCompleted) {
-                isCompleted = true;
-                setVideosLoaded(true);
-            }
-        }, 5000);
-
-        return () => {
-            clearTimeout(timer);
-            clearTimeout(fallbackTimer);
-        };
-    }, [videos]);
-
     // Check if everything is fully loaded and update global loading state
     useEffect(() => {
         const allDataLoaded = !loadingBlogs && !loadingProducts;
-        const allAssetsLoaded = imagesLoaded && videosLoaded;
+        const allAssetsLoaded = imagesLoaded;
 
         if (allDataLoaded && allAssetsLoaded) {
             // Small delay to ensure smooth transition
@@ -220,7 +160,7 @@ const Home = () => {
             // Keep loading state true while fetching data
             setIsLoading(true);
         }
-    }, [loadingBlogs, loadingProducts, imagesLoaded, videosLoaded, setIsLoading]);
+    }, [loadingBlogs, loadingProducts, imagesLoaded, setIsLoading]);
 
     // Maximum loading time fallback (10 seconds)
     useEffect(() => {
@@ -422,9 +362,8 @@ const Home = () => {
                             playsInline
                             preload='metadata'
                             key={idx}
-                            className='h-[90%] w-96 object-cover'
+                            className='w-full max-w-96 h-auto object-contain'
                             style={{ background: '#222' }}
-                            ref={(el) => (videoRefs.current[idx] = el)}
                         >
                             <source src={url} type="video/mp4" />
                             Your browser does not support the video tag.

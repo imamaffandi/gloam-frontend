@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { productAPI, blogAPI } from '../services/api';
+import { useLoading } from '../context/LoadingContext';
 
 const Admin = () => {
     const [products, setProducts] = useState([]);
     const [blogs, setBlogs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [loadingBlogs, setLoadingBlogs] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const { setIsLoading } = useLoading();
     const [deleting, setDeleting] = useState({});
     const [deletingBlog, setDeletingBlog] = useState({});
     const [showForm, setShowForm] = useState(false);
@@ -36,6 +39,11 @@ const Admin = () => {
     const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     const availableColors = ['Black', 'White', 'Gray', 'Navy', 'Red', 'Blue', 'Green', 'Brown', 'Beige'];
 
+    // Ensure loading is off when Admin page mounts
+    useEffect(() => {
+        setIsLoading(false);
+    }, [setIsLoading]);
+
     useEffect(() => {
         fetchProducts();
         fetchBlogs();
@@ -45,24 +53,27 @@ const Admin = () => {
     }, [showForm, showBlogForm]);
     const fetchProducts = async () => {
         try {
-            setLoading(true);
+            setLoadingProducts(true);
             const data = await productAPI.getAll();
             setProducts(data);
         } catch (err) {
             console.error('Error fetching products:', err);
             alert('Failed to load products');
         } finally {
-            setLoading(false);
+            setLoadingProducts(false);
         }
     };
 
     const fetchBlogs = async () => {
         try {
+            setLoadingBlogs(true);
             const data = await blogAPI.getAll();
             setBlogs(data);
         } catch (err) {
             console.error('Error fetching blogs:', err);
             // Don't show alert for blogs, just log error
+        } finally {
+            setLoadingBlogs(false);
         }
     };
 
@@ -340,16 +351,6 @@ const Admin = () => {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-            </div>
-        );
-    }
-
     return (
         <div className="bg-neutral-50 min-h-screen w-full font-body text-neutral-800">
             {/* Header */}
@@ -387,7 +388,13 @@ const Admin = () => {
                         </p>
                     </div>
 
-                    {products.length === 0 ? (
+                    {loadingProducts ? (
+                        <div className="p-8 md:p-12 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </div>
+                    ) : products.length === 0 ? (
                         <div className="p-8 md:p-12 text-center text-neutral-500 text-sm md:text-base">
                             No products found. Create your first one!
                         </div>
@@ -472,7 +479,13 @@ const Admin = () => {
                         </p>
                     </div>
 
-                    {blogs.length === 0 ? (
+                    {loadingBlogs ? (
+                        <div className="p-8 md:p-12 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="size-6 animate-spin">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </div>
+                    ) : blogs.length === 0 ? (
                         <div className="p-8 md:p-12 text-center text-neutral-500 text-sm md:text-base">
                             No blogs found. Create your first one!
                         </div>
