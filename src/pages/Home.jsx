@@ -296,7 +296,7 @@ const Home = () => {
                 <p>Our latest products</p>
                 <div className='flex flex-wrap items-center justify-center py-10'>
                     {products.length > 0 ? (
-                        products.map((product) => {
+                        products.slice(0, 9).map((product) => {
                             // Get the first image from the product's images array
                             const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
 

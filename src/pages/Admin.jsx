@@ -14,6 +14,7 @@ const Admin = () => {
     const [showForm, setShowForm] = useState(false);
     const [showBlogForm, setShowBlogForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [editingBlog, setEditingBlog] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -33,6 +34,9 @@ const Admin = () => {
     });
     const [blogImage, setBlogImage] = useState(null);
     const [blogImagePreview, setBlogImagePreview] = useState(null);
+    const [blogMedia, setBlogMedia] = useState(null);
+    const [blogMediaPreview, setBlogMediaPreview] = useState(null);
+    const [blogMediaType, setBlogMediaType] = useState(null); // 'image', 'audio', 'video'
     const [submittingBlog, setSubmittingBlog] = useState(false);
 
     const categories = ['Shirt', 'Pants', 'Hoodies', 'Jacket', 'T-shirt', 'Accessories'];
@@ -93,10 +97,18 @@ const Admin = () => {
 
         if (imageFiles.length === 0) return;
 
+        // Limit to maximum 2 images
+        const remainingSlots = 2 - images.length;
+        if (remainingSlots <= 0) {
+            alert('Maximum 2 images allowed');
+            return;
+        }
+
+        const filesToAdd = imageFiles.slice(0, remainingSlots);
         const newImages = [...images];
         const newPreviews = [...imagePreviews];
 
-        for (const file of imageFiles) {
+        for (const file of filesToAdd) {
             const base64 = await convertToBase64(file);
             newImages.push(base64);
             newPreviews.push({
@@ -116,14 +128,34 @@ const Admin = () => {
     };
 
     const handleBlogImageSelect = async (file) => {
-        if (!file || !file.type.startsWith('image/')) return;
+        if (!file) return;
 
         const base64 = await convertToBase64(file);
-        setBlogImage(base64);
-        setBlogImagePreview({
-            src: base64,
-            name: file.name
-        });
+
+        if (file.type.startsWith('image/')) {
+            setBlogImage(base64);
+            setBlogImagePreview({
+                src: base64,
+                name: file.name
+            });
+            setBlogMediaType('image');
+        } else if (file.type.startsWith('audio/')) {
+            setBlogMedia(base64);
+            setBlogMediaPreview({
+                src: base64,
+                name: file.name,
+                type: 'audio'
+            });
+            setBlogMediaType('audio');
+        } else if (file.type.startsWith('video/')) {
+            setBlogMedia(base64);
+            setBlogMediaPreview({
+                src: base64,
+                name: file.name,
+                type: 'video'
+            });
+            setBlogMediaType('video');
+        }
     };
 
     const handleBlogFileInput = (e) => {
@@ -133,9 +165,22 @@ const Admin = () => {
         }
     };
 
+    const handleBlogMediaInput = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleBlogImageSelect(file);
+        }
+    };
+
     const removeBlogImage = () => {
         setBlogImage(null);
         setBlogImagePreview(null);
+    };
+
+    const removeBlogMedia = () => {
+        setBlogMedia(null);
+        setBlogMediaPreview(null);
+        setBlogMediaType(null);
     };
 
     const removeImage = (index) => {
@@ -310,11 +355,19 @@ const Admin = () => {
             const blogData = {
                 title: blogFormData.title,
                 content: blogFormData.content,
-                image: blogImage
+                image: blogImage,
+                media: blogMedia,
+                mediaType: blogMediaType
             };
 
-            await blogAPI.create(blogData);
-            alert('Blog created successfully!');
+            if (editingBlog) {
+                await blogAPI.update(editingBlog._id, blogData);
+                alert('Blog updated successfully!');
+            } else {
+                await blogAPI.create(blogData);
+                alert('Blog created successfully!');
+            }
+
             resetBlogForm();
             fetchBlogs();
         } catch (err) {
@@ -325,6 +378,43 @@ const Admin = () => {
         }
     };
 
+    const handleEditBlog = (blog) => {
+        setEditingBlog(blog);
+        setBlogFormData({
+            title: blog.title || '',
+            content: blog.content || ''
+        });
+
+        // Set image if exists
+        if (blog.image) {
+            setBlogImage(blog.image);
+            setBlogImagePreview({
+                src: blog.image,
+                name: 'Blog image'
+            });
+        } else {
+            setBlogImage(null);
+            setBlogImagePreview(null);
+        }
+
+        // Set media if exists
+        if (blog.media) {
+            setBlogMedia(blog.media);
+            setBlogMediaType(blog.mediaType);
+            setBlogMediaPreview({
+                src: blog.media,
+                name: 'Blog media',
+                type: blog.mediaType
+            });
+        } else {
+            setBlogMedia(null);
+            setBlogMediaPreview(null);
+            setBlogMediaType(null);
+        }
+
+        setShowBlogForm(true);
+    };
+
     const resetBlogForm = () => {
         setBlogFormData({
             title: '',
@@ -332,6 +422,10 @@ const Admin = () => {
         });
         setBlogImage(null);
         setBlogImagePreview(null);
+        setBlogMedia(null);
+        setBlogMediaPreview(null);
+        setBlogMediaType(null);
+        setEditingBlog(null);
         setShowBlogForm(false);
     };
 
@@ -529,7 +623,14 @@ const Admin = () => {
                                             <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-500">
                                                 {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'N/A'}
                                             </td>
-                                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium">
+                                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium flex flex-col sm:flex-row gap-1 sm:gap-3">
+                                                <button
+                                                    onClick={() => handleEditBlog(blog)}
+                                                    disabled={deletingBlog[blog._id]}
+                                                    className="text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left sm:text-center"
+                                                >
+                                                    Edit
+                                                </button>
                                                 <button
                                                     onClick={() => handleDeleteBlog(blog._id)}
                                                     disabled={deletingBlog[blog._id]}
@@ -558,8 +659,19 @@ const Admin = () => {
 
             {/* MODAL FORM */}
             {showForm && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4">
-                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4"
+                    onClick={resetForm}
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                >
+                    <div
+                        className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] my-4 p-4 md:p-6 lg:p-8 relative overflow-y-auto overscroll-contain"
+                        onClick={(e) => e.stopPropagation()}
+                        onWheel={(e) => e.stopPropagation()}
+                        onScroll={(e) => e.stopPropagation()}
+                        style={{ overscrollBehavior: 'contain' }}
+                    >
                         <button
                             onClick={resetForm}
                             className="absolute top-3 md:top-4 right-3 md:right-4 text-neutral-500 hover:text-neutral-800 text-xl md:text-2xl"
@@ -716,8 +828,11 @@ const Admin = () => {
                             {/* Image Upload */}
                             <div>
                                 <label className=" text-sm font-medium text-neutral-700 mb-3">
-                                    Product Images
+                                    Product Images (Maximum 2)
                                 </label>
+                                {images.length >= 2 && (
+                                    <p className="text-xs text-amber-600 mb-2">Maximum 2 images reached. Remove an image to add more.</p>
+                                )}
 
                                 {/* File input */}
                                 <input
@@ -726,7 +841,8 @@ const Admin = () => {
                                     accept="image/*"
                                     multiple
                                     onChange={handleFileInput}
-                                    className=" w-full text-sm text-neutral-700 border border-neutral-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-neutral-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-700"
+                                    disabled={images.length >= 2}
+                                    className=" w-full text-sm text-neutral-700 border border-neutral-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-neutral-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
 
                                 {/* Main Preview */}
@@ -809,8 +925,19 @@ const Admin = () => {
 
             {/* BLOG MODAL FORM */}
             {showBlogForm && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4">
-                    <div className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4"
+                    onClick={resetBlogForm}
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                >
+                    <div
+                        className="bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] my-4 p-4 md:p-6 lg:p-8 relative overflow-y-auto overscroll-contain"
+                        onClick={(e) => e.stopPropagation()}
+                        onWheel={(e) => e.stopPropagation()}
+                        onScroll={(e) => e.stopPropagation()}
+                        style={{ overscrollBehavior: 'contain' }}
+                    >
                         <button
                             onClick={resetBlogForm}
                             className="absolute top-3 md:top-4 right-3 md:right-4 text-neutral-500 hover:text-neutral-800 text-xl md:text-2xl"
@@ -818,7 +945,7 @@ const Admin = () => {
                             ×
                         </button>
                         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-neutral-900 pr-8">
-                            Create New Blog
+                            {editingBlog ? "Edit Blog" : "Create New Blog"}
                         </h2>
 
                         <form onSubmit={handleBlogSubmit} className="space-y-4 md:space-y-6">
@@ -875,6 +1002,51 @@ const Admin = () => {
                                 )}
                             </div>
 
+                            {/* Media Upload (Audio/Video) */}
+                            <div>
+                                <label className="text-sm font-medium text-neutral-700 mb-3 ">
+                                    Media (Audio/Video)
+                                </label>
+
+                                {/* File input */}
+                                <input
+                                    id="blog-media-input"
+                                    type="file"
+                                    accept="audio/*,video/*"
+                                    onChange={handleBlogMediaInput}
+                                    className="w-full text-sm text-neutral-700 border border-neutral-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-neutral-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-700"
+                                />
+
+                                {/* Media Preview */}
+                                {blogMediaPreview && (
+                                    <div className="mt-4">
+                                        <div className="relative w-full h-48 md:h-72 border border-neutral-200 rounded-xl overflow-hidden flex items-center justify-center bg-neutral-100">
+                                            {blogMediaPreview.type === 'audio' ? (
+                                                <audio controls className="w-full">
+                                                    <source src={blogMediaPreview.src} type="audio/mpeg" />
+                                                    <source src={blogMediaPreview.src} type="audio/wav" />
+                                                    Your browser does not support the audio tag.
+                                                </audio>
+                                            ) : (
+                                                <video controls className="w-full h-full object-contain">
+                                                    <source src={blogMediaPreview.src} type="video/mp4" />
+                                                    <source src={blogMediaPreview.src} type="video/webm" />
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={removeBlogMedia}
+                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-sm font-semibold hover:bg-red-600 transition-colors shadow-lg"
+                                                title="Delete media"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Content */}
                             <div>
                                 <label className="text-sm font-medium text-neutral-700 mb-2 ">
@@ -909,10 +1081,10 @@ const Admin = () => {
                                     {submittingBlog ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                                            Creating...
+                                            {editingBlog ? "Updating..." : "Creating..."}
                                         </>
                                     ) : (
-                                        "Create Blog"
+                                        editingBlog ? "Update Blog" : "Create Blog"
                                     )}
                                 </button>
                             </div>

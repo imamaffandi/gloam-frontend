@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { blogAPI } from '../services/api'
 import { Glare } from '../components'
@@ -10,12 +10,14 @@ const Blog = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { setIsLoading } = useLoading();
+    const mediaRef = useRef(null);
 
     useEffect(() => {
         const fetchBlog = async () => {
             try {
                 setLoading(true);
                 setIsLoading(true);
+                setError(null);
                 const data = await blogAPI.getById(id);
                 setBlog(data);
             } catch (err) {
@@ -36,6 +38,23 @@ const Blog = () => {
         }
     }, [id, setIsLoading]);
 
+    // Auto-play media when blog loads
+    useEffect(() => {
+        if (blog && blog.media && mediaRef.current) {
+            // Auto-play media when blog loads
+            mediaRef.current.play().catch(err => {
+                console.log('Auto-play prevented:', err);
+                // Some browsers prevent auto-play, that's okay
+            });
+        }
+    }, [blog]);
+
+    // Show loading state
+    if (loading) {
+        return null; // Loading component will handle this
+    }
+
+    // Show error only after loading is complete
     if (error || !blog) {
         return (
             <main className='min-h-screen w-full font-body flex flex-col items-center justify-center p-5'>
@@ -63,11 +82,13 @@ const Blog = () => {
 
     return (
         <main className='min-h-screen w-full font-body relative'>
-            <img
-                src={blog.image}
-                alt={blog.title}
-                className='w-full h-[80vh] object-cover'
-            />
+            {blog.image && (
+                <img
+                    src={blog.image}
+                    alt={blog.title}
+                    className='w-full h-[80vh] object-cover'
+                />
+            )}
             <Link
                 to={"/"}
                 className='absolute left-5 top-5 z-50 flex items-center justify-center gap-2 bg-light rounded-xl px-5 py-3 hover:bg-neutral-100 transition-colors'
@@ -81,6 +102,38 @@ const Blog = () => {
                 <h1 className='text-5xl tracking-widest font-semibold'>
                     {blog.title}
                 </h1>
+
+                {/* Media Player (Audio/Video) */}
+                {blog.media && blog.mediaType && (
+                    <div className='my-6 w-full'>
+                        {blog.mediaType === 'audio' ? (
+                            <audio
+                                ref={mediaRef}
+                                controls
+                                autoPlay
+                                className='w-full'
+                            >
+                                <source src={blog.media} type="audio/mpeg" />
+                                <source src={blog.media} type="audio/wav" />
+                                <source src={blog.media} type="audio/ogg" />
+                                Your browser does not support the audio tag.
+                            </audio>
+                        ) : blog.mediaType === 'video' ? (
+                            <video
+                                ref={mediaRef}
+                                controls
+                                autoPlay
+                                className='w-full max-w-4xl mx-auto rounded-lg'
+                            >
+                                <source src={blog.media} type="video/mp4" />
+                                <source src={blog.media} type="video/webm" />
+                                <source src={blog.media} type="video/ogg" />
+                                Your browser does not support the video tag.
+                            </video>
+                        ) : null}
+                    </div>
+                )}
+
                 <p className='text-sm tracking-wide whitespace-pre-line'>
                     {formatContent(blog.content)}
                 </p>
