@@ -16,7 +16,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
 const Home = () => {
     const mainRef = useRef()
-    const carouselImages = useMemo(() => [img1, img2, img3], []);
+    const carouselImages = useMemo(() => ["https://picsum.photos/200/300?random=1", "https://picsum.photos/200/300?random=2", "https://picsum.photos/200/300?random=3"], []);
     const videos = useMemo(() => [video1, video2, video3], []);
     const [blogs, setBlogs] = useState([]);
     const [loadingBlogs, setLoadingBlogs] = useState(true);
@@ -181,7 +181,7 @@ const Home = () => {
 
                 {/* Hero Content */}
                 <div className="relative z-10 w-full px-5 md:px-40 flex flex-col gap-5 items-center justify-center">
-                    <Hero text="GLOAMING MISTAKE"
+                    <Hero text="REIGNITE DISTRICT"
                         flex={true}
                         alpha={false}
                         stroke={false}
@@ -210,9 +210,9 @@ const Home = () => {
                 <section ref={mainRef} className="w-full h-screen relative">
                     {/* Brand Intro */}
                     <div className="w-72 absolute right-5 top-20">
-                        <p className="font-bold text-5xl">Gloam</p>
+                        <p className="font-bold text-5xl">Reignite District</p>
                         <p className="text-justify text-xs/3.5">
-                            Gloaming Mistake overpower the world
+                            Reignite District overpower the world
                         </p>
                     </div>
 
@@ -265,7 +265,7 @@ const Home = () => {
                                 <div className="flex flex-col items-start justify-start border-dashed px-10 border-stone-500">
                                     <p>Everyday Top</p>
                                     <p>Wide Pants</p>
-                                    <p>Gloam Studio Series</p>
+                                    <p>Reignite District Studio Series</p>
                                 </div>
                             </div>
                         </div>
@@ -282,7 +282,7 @@ const Home = () => {
                                     <p>Canvas Belt</p>
                                 </div>
                                 <div className="flex flex-col items-start justify-start border-dashed px-10 border-white">
-                                    <p>Gloam Socks</p>
+                                    <p>Reignite District Socks</p>
                                     <p>Metal Keychain</p>
                                 </div>
                             </div>
@@ -352,7 +352,7 @@ const Home = () => {
                 </div>
             </section>
             {/* Video section */}
-            <section className='w-full px-5 lg:px-20 py-10 h-fit lg:h-screen flex flex-col lg:flex-row gap-10 items-center justify-center'>
+            {/* <section className='w-full px-5 lg:px-20 py-10 h-fit lg:h-screen flex flex-col lg:flex-row gap-10 items-center justify-center'>
                 {Array.isArray(videos) && videos.length > 0 ? (
                     videos.map((url, idx) => (
                         <video
@@ -374,7 +374,7 @@ const Home = () => {
                         No videos to display.
                     </div>
                 )}
-            </section>
+            </section> */}
             {/* CTA */}
             <div className="h-fit md:h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
                 <main className="bg-dark text-light">
@@ -407,16 +407,16 @@ const Home = () => {
                             </div>
                             <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
                                 <a
-                                    href="https://instagram.com/gloamingmistake"
+                                    href="https://instagram.com/reignite.district"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
                                 >
-                                    @gloamingmistake
+                                    @reignite.district
                                 </a>
                                 <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
-                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
-                                    gloamingmistake@gmail.com
+                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left wrap-break-words">
+                                    reignitedistrict@gmail.com
                                 </p>
                             </div>
                         </section>

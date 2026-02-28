@@ -451,7 +451,7 @@ const Admin = () => {
             <header className="sticky top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-10 border-b border-neutral-200">
                 <div className="w-full px-4 md:px-8 py-4 md:py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
                     <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900">
-                        Gloam Admin
+                        REIGNITE Admin
                     </h1>
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                         <button

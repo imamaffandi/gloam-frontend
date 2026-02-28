@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = (username, password) => {
         // Simple authentication - in production, this should be done via backend API
-        if (username === 'gloamadmin' && password === 'passwordadmingloam') {
+        if (username === 'reignite' && password === 'reignitedistrict') {
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
             return true;

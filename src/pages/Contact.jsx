@@ -18,7 +18,7 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const text = `Hello GLOAM,%0A%0AMy name is *${form.name}* (%0AEmail: ${form.email}%0A)%0A%0A${form.message}%0A%0A— Sent from the website contact form`;
+        const text = `Hello Reignite Admin,%0A%0AMy name is *${form.name}* (%0AEmail: ${form.email}%0A)%0A%0A${form.message}%0A%0A— Sent from the website contact form`;
         const url = `https://api.whatsapp.com/send?phone=6281232179590&text=${text}`;
         window.open(url, "_blank");
         setSubmitted(true);
@@ -44,11 +44,11 @@ const Contact = () => {
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Email</h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed">gloamingmistake@gmail.com</p>
+                        <p className="text-neutral-400 text-sm leading-relaxed">reignitedistrict@gmail.com</p>
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Instagram</h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed">@gloamingmistake</p>
+                        <p className="text-neutral-400 text-sm leading-relaxed">@reignite.district</p>
                     </div>
                 </div>
 
@@ -93,7 +93,7 @@ const Contact = () => {
                 </form>
 
                 <p className="text-xs text-neutral-500 mt-10 tracking-widest">
-                    © {new Date().getFullYear()} GLOAM — Crafted for imperfect hours.
+                    © {new Date().getFullYear()} REIGNITE DISTRICT — Crafted for imperfect hours.
                 </p>
             </main>
         </>

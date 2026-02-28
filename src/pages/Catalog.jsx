@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { productAPI } from '../services/api';
+import { img1, img2, img3 } from '../assets';
 import { Glare } from '../components';
 import { useLoading } from '../context/LoadingContext';
+import { Hero, SplitText, ImageCarousel } from '../components'
 
 const ProductCard = ({ product }) => {
     const [hoveredImageIndex, setHoveredImageIndex] = useState(0);
@@ -73,7 +75,7 @@ const Catalog = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { setIsLoading } = useLoading();
-
+    const carouselImages = useMemo(() => [img1, img2, img3], []);
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -106,6 +108,39 @@ const Catalog = () => {
 
     return (
         <>
+            {/* Hero */}
+            <section className='relative w-full h-screen flex flex-col gap-5 items-center justify-center text-center overflow-hidden'>
+                {/* Background Carousel */}
+                {/* <div className="absolute inset-0 z-0">
+                    <ImageCarousel images={carouselImages} interval={5000} />
+                </div> */}
+
+                {/* Hero Content */}
+                <div className="relative z-10 w-full px-5 md:px-40 flex flex-col gap-5 items-center justify-center text-dark">
+                    <Hero text="REIGNITE DISTRICT"
+                        flex={true}
+                        alpha={false}
+                        stroke={false}
+                        width={true}
+                        weight={true}
+                        italic={true}
+                        textColor="#000"
+                        strokeColor="#ff0000"
+                        className=''
+                        minFontSize={100} />
+                    <SplitText
+                        Tag='h2'
+                        text='Overpower The World'
+                        type='words'
+                        stagger={0.04}
+                        fromY={20}
+                        duration={0.8}
+                        delay={1}
+                        ease='power3.out'
+                        className='text-lg lg:text-xl font-thin tracking-widest '
+                    />
+                </div>
+            </section>
             {/* Header */}
             <section className="text-center font-body my-16 pt-20">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight">The Catalog</h1>
@@ -156,16 +191,16 @@ const Catalog = () => {
                                 </div>
                                 <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
                                     <a
-                                        href="https://instagram.com/gloamingmistake"
+                                        href="https://instagram.com/reignite.district"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
                                     >
-                                        @gloamingmistake
+                                        @reignite.district
                                     </a>
                                     <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
                                     <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
-                                        gloamingmistake@gmail.com
+                                        reignitedistrict@gmail.com
                                     </p>
                                 </div>
                             </section>
