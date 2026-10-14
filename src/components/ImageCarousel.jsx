@@ -16,39 +16,39 @@ const ImageCarousel = ({ images, interval = 5000, className = '' }) => {
     };
 
     return (
-        <div className={`relative w-full h-full overflow-hidden ${className}`}>
+        <div className={`relative w-full h-full overflow-hidden bg-paper-2 ${className}`}>
             {/* Images */}
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 halftone">
                 {images.map((image, index) => (
-                    <div
+                    <img
                         key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                            }`}
-                    >
-                        <img
-                            src={image}
-                            alt={`Carousel slide ${index + 1}`}
-                            className="w-full h-full object-cover"
-                        />
-                        {/* Overlay for better text readability */}
-                        <div className="absolute inset-0 bg-black/30"></div>
-                    </div>
+                        src={image}
+                        alt={`Carousel slide ${index + 1}`}
+                        className={`absolute inset-0 w-full h-full object-cover print-img transition-opacity duration-300 ease-linear ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+                    />
                 ))}
             </div>
 
-            {/* Dots Indicator */}
+            {/* Frame counter */}
+            <div className="absolute top-0 left-0 z-20 bg-ink text-paper micro px-2 py-1">
+                FRM {String(currentIndex + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
+            </div>
+
+            {/* Segment Indicator */}
             {images.length > 1 && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                <div className="absolute bottom-0 left-0 right-0 z-20 flex border-t border-ink bg-paper">
                     {images.map((_, index) => (
                         <button
                             key={index}
                             onClick={() => goToSlide(index)}
-                            className={`transition-all duration-300 rounded-full ${index === currentIndex
-                                ? 'bg-white w-8 h-2'
-                                : 'bg-white/50 w-2 h-2 hover:bg-white/75'
+                            className={`flex-1 h-7 micro border-r border-ink last:border-r-0 cursor-pointer transition-colors duration-100 ${index === currentIndex
+                                ? 'bg-ink text-paper'
+                                : 'hover:bg-paper-2'
                                 }`}
                             aria-label={`Go to slide ${index + 1}`}
-                        />
+                        >
+                            {String(index + 1).padStart(2, '0')}
+                        </button>
                     ))}
                 </div>
             )}
@@ -57,4 +57,3 @@ const ImageCarousel = ({ images, interval = 5000, className = '' }) => {
 };
 
 export default ImageCarousel;
-

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import gsap from 'gsap';
-import { Hero, SplitText, ImageCarousel } from '../components';
-import { Glare } from '../components'
+import { SplitText, ImageCarousel, SectionHeader, SiteFooter } from '../components';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useGSAP } from '@gsap/react';
@@ -12,7 +11,48 @@ import { blogAPI, productAPI } from '../services/api';
 import { useLoading } from '../context/LoadingContext';
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
-// Carousel images array
+const collections = [
+    {
+        title: 'New Arrivals',
+        ref: 'RD-NA-01',
+        tone: 'bg-paper-2 text-ink',
+        rule: 'border-ink',
+        items: [
+            ['Urban Overshirt', 'Minimal Hoodie', 'Relaxed Denim'],
+            ['Everyday Cargo', 'Essential Tee'],
+        ],
+    },
+    {
+        title: 'Men’s Collection',
+        ref: 'RD-MC-02',
+        tone: 'bg-paper text-ink',
+        rule: 'border-ink',
+        items: [
+            ['Streetwear Series', 'Classic Outerwear', 'Monochrome Line'],
+            ['Minimal Knitwear', 'Everyday Essentials'],
+        ],
+    },
+    {
+        title: 'Women’s Collection',
+        ref: 'RD-WC-03',
+        tone: 'bg-ink text-paper',
+        rule: 'border-paper/40',
+        items: [
+            ['Fluid Dress', 'Minimal Blazer', 'Soft Knit Set'],
+            ['Everyday Top', 'Wide Pants', 'Reignite District Studio Series'],
+        ],
+    },
+    {
+        title: 'Accessories',
+        ref: 'RD-AC-04',
+        tone: 'bg-hazard text-ink',
+        rule: 'border-ink',
+        items: [
+            ['Signature Tote', 'Minimal Cap', 'Canvas Belt'],
+            ['Reignite District Socks', 'Metal Keychain'],
+        ],
+    },
+];
 
 const Home = () => {
     const mainRef = useRef()
@@ -171,186 +211,178 @@ const Home = () => {
         return () => clearTimeout(maxLoadingTimer);
     }, [setIsLoading]);
     return (
-        <main className="mx-auto font-body h-full">
+        <main className="mx-auto font-body h-full bg-paper text-ink">
             {/* Hero */}
-            <section className='relative w-full h-screen flex flex-col gap-5 items-center justify-center text-center overflow-hidden'>
-                {/* Background Carousel */}
-                <div className="absolute inset-0 z-0">
-                    <ImageCarousel images={carouselImages} interval={5000} />
+            <section className='relative w-full min-h-screen pt-12 flex flex-col'>
+                {/* Telemetry strip */}
+                <div className="grid grid-cols-2 md:grid-cols-4 border-b border-ink micro">
+                    <span className="px-4 py-2 border-r border-ink">[ Reignite District ]</span>
+                    <span className="px-4 py-2 md:border-r border-ink">Unit / RD-01</span>
+                    <span className="hidden md:block px-4 py-2 border-r border-ink">Malang, ID — 7.98°S 112.63°E</span>
+                    <span className="hidden md:block px-4 py-2 text-right">Rev {new Date().getFullYear()}.1</span>
                 </div>
 
-                {/* Hero Content */}
-                <div className="relative z-10 w-full px-5 md:px-40 flex flex-col gap-5 items-center justify-center">
-                    <Hero text="REIGNITE DISTRICT"
-                        flex={true}
-                        alpha={false}
-                        stroke={false}
-                        width={true}
-                        weight={true}
-                        italic={true}
-                        textColor="#fff"
-                        strokeColor="#ff0000"
-                        className=''
-                        minFontSize={100} />
-                    <SplitText
-                        Tag='h2'
-                        text='Overpower The World'
-                        type='words'
-                        stagger={0.04}
-                        fromY={20}
-                        duration={0.8}
-                        delay={1}
-                        ease='power3.out'
-                        className='text-lg lg:text-xl font-thin tracking-widest text-white'
-                    />
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+                    {/* Macro type */}
+                    <div className="lg:col-span-7 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-ink p-4 md:p-8">
+                        <p className="micro max-w-xs">
+                            Streetwear manufactured for the ones who refuse to dim. Series 01 now in circulation.
+                        </p>
+                        <h1 className="macro text-[clamp(4.5rem,13.5vw,15rem)] my-10 lg:my-0">
+                            Reignite<br />
+                            District<sup className="text-hazard text-[0.3em] align-top">®</sup>
+                        </h1>
+                        <div className="flex items-end justify-between gap-6">
+                            <SplitText
+                                Tag='h2'
+                                text='/// Overpower The World'
+                                type='words'
+                                stagger={0.04}
+                                fromY={20}
+                                duration={0.8}
+                                delay={1}
+                                ease='power3.out'
+                                className='micro text-sm! font-bold'
+                            />
+                            <Link to="/catalog" className="btn-ink shrink-0">
+                                Catalog <span aria-hidden="true">&gt;&gt;&gt;</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Image frame */}
+                    <div className="lg:col-span-5 p-4 md:p-8 flex flex-col gap-3">
+                        <div className="flex justify-between micro">
+                            <span>Fig. 01 — Field Documentation</span>
+                            <span className="text-hazard">● REC</span>
+                        </div>
+                        <div className="crosshairs flex-1 min-h-[45vh] border border-ink">
+                            <ImageCarousel images={carouselImages} interval={5000} />
+                        </div>
+                    </div>
                 </div>
+
+                <div className="hazard-stripe h-3 w-full border-y border-ink" aria-hidden="true" />
             </section>
+
             {/* About */}
             <section className="relative w-full">
-                <section ref={mainRef} className="w-full h-screen relative">
+                <section ref={mainRef} className="w-full h-screen relative overflow-hidden">
                     {/* Brand Intro */}
                     <div className="w-72 absolute right-5 top-20">
-                        <p className="font-bold text-5xl">Reignite District</p>
-                        <p className="text-justify text-xs/3.5">
+                        <p className="micro mb-3">[ Index / Manifest ]</p>
+                        <p className="macro text-5xl">Reignite District<span className="text-hazard">®</span></p>
+                        <p className="micro mt-3 opacity-70">
                             Reignite District overpower the world
                         </p>
                     </div>
 
-                    {/* New Arrivals */}
-                    <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-200 h-[80%] w-full md:w-[70%] rounded-br-3xl">
-                            <p className="font-bold text-7xl/16 p-3">New Arrivals</p>
-                            <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
-                                <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
-                                    <p>Urban Overshirt</p>
-                                    <p>Minimal Hoodie</p>
-                                    <p>Relaxed Denim</p>
+                    {collections.map((collection, i) => (
+                        <article key={collection.title} className="absolute top-16 left-0 w-full h-full">
+                            <div className={`relative h-[80%] w-full md:w-[70%] border-2 border-ink overflow-hidden flex flex-col ${collection.tone}`}>
+                                <div className={`flex justify-between border-b ${collection.rule} px-4 py-2 micro`}>
+                                    <span>[ Collection {String(i + 1).padStart(2, '0')} / {String(collections.length).padStart(2, '0')} ]</span>
+                                    <span>Ref {collection.ref}</span>
                                 </div>
-                                <div className="flex flex-col items-start justify-start border-dashed px-10 border-stone-500">
-                                    <p>Everyday Cargo</p>
-                                    <p>Essential Tee</p>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-
-                    {/* Men Collection */}
-                    <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-300 h-[80%] w-full md:w-[70%] rounded-br-3xl">
-                            <p className="font-bold text-7xl/16 p-3">Men’s Collection</p>
-                            <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
-                                <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
-                                    <p>Streetwear Series</p>
-                                    <p>Classic Outerwear</p>
-                                    <p>Monochrome Line</p>
-                                </div>
-                                <div className="flex flex-col items-start justify-start border-dashed px-10 border-stone-500">
-                                    <p>Minimal Knitwear</p>
-                                    <p>Everyday Essentials</p>
+                                <h3 className="macro text-[clamp(3rem,8vw,8rem)] p-4 relative z-10">{collection.title}</h3>
+                                <span
+                                    className="macro absolute -right-4 -bottom-10 text-[clamp(10rem,28vw,26rem)] opacity-15 pointer-events-none select-none"
+                                    aria-hidden="true"
+                                >
+                                    {String(i + 1).padStart(2, '0')}
+                                </span>
+                                <div className={`mt-auto relative z-10 grid grid-cols-1 sm:grid-cols-2 border-t ${collection.rule}`}>
+                                    {collection.items.map((column, c) => (
+                                        <ul key={c} className={`px-4 py-3 micro space-y-1.5 ${c === 0 ? `sm:border-r ${collection.rule}` : ''}`}>
+                                            {column.map(item => (
+                                                <li key={item}><span className="opacity-50">&gt;&gt;&gt;</span> {item}</li>
+                                            ))}
+                                        </ul>
+                                    ))}
                                 </div>
                             </div>
-                        </div>
-                    </main>
-
-                    {/* Women Collection */}
-                    <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-400 h-[80%] w-full md:w-[70%] rounded-br-3xl">
-                            <p className="font-bold text-7xl/16 p-3">Women’s Collection</p>
-                            <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
-                                <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-stone-500">
-                                    <p>Fluid Dress</p>
-                                    <p>Minimal Blazer</p>
-                                    <p>Soft Knit Set</p>
-                                </div>
-                                <div className="flex flex-col items-start justify-start border-dashed px-10 border-stone-500">
-                                    <p>Everyday Top</p>
-                                    <p>Wide Pants</p>
-                                    <p>Reignite District Studio Series</p>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-
-                    {/* Accessories */}
-                    <main className="absolute top-10 left-0 w-full h-full">
-                        <div className="relative bg-gray-500 text-white h-[80%] w-full md:w-[70%] rounded-br-3xl">
-                            <p className="font-bold text-7xl/16 p-3">Accessories</p>
-                            <div className="absolute bottom-5 left-5 flex justify-around items-baseline">
-                                <div className="flex flex-col items-start justify-start border-dashed border-r px-10 border-white">
-                                    <p>Signature Tote</p>
-                                    <p>Minimal Cap</p>
-                                    <p>Canvas Belt</p>
-                                </div>
-                                <div className="flex flex-col items-start justify-start border-dashed px-10 border-white">
-                                    <p>Reignite District Socks</p>
-                                    <p>Metal Keychain</p>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
+                        </article>
+                    ))}
                 </section>
             </section>
 
             {/* Portfolio */}
-            <section id='portfolio' className='w-full px lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
-                <p>Our latest products</p>
-                <div className='flex flex-wrap items-center justify-center py-10'>
-                    {products.length > 0 ? (
-                        products.slice(0, 9).map((product) => {
+            <section id='portfolio' className='w-full py-16 md:py-24'>
+                <SectionHeader index="02" label="Inventory / Latest" title="Latest Products" meta={`${Math.min(products.length, 9)} units listed`} />
+                {products.length > 0 ? (
+                    <div className='grid-rule grid-cols-2 md:grid-cols-3 border-x-0 border-t-0'>
+                        {products.slice(0, 9).map((product, i) => {
                             // Get the first image from the product's images array
                             const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
 
                             if (!productImage) return null;
 
                             return (
-                                <Link to={'/catalog'} key={product._id}>
-                                    <img
-                                        src={productImage}
-                                        alt={product.name || `Product ${product._id}`}
-                                        className='border border-dark overflow-hidden w-[90%] md:w-40 lg:w-72 h-20 lg:h-56 m-2 rounded-xl object-cover grayscale hover:grayscale-0 cursor-pointer hover:scale-105 transition-all duration-300 active:scale-95'
-                                    />
-                                </Link>
-                            );
-                        })
-                    ) : (
-                        <div className="w-full text-center py-10 text-neutral-500">
-                            No products available at the moment.
-                        </div>
-                    )}
-                </div>
-            </section>
-            {/* Blog */}
-            <section id='blog' className='w-full px-8 lg:px-20 min-h-[70dvh] md:min-h-screen flex flex-col gap-5 items-center justify-center'>
-                <p>Our journals</p>
-                <div className='flex flex-wrap items-center justify-around w-full py-10'>
-                    {blogs.length > 0 ? (
-                        blogs.map((blog) => {
-                            const previewText = blog.content ? blog.content.substring(0, 100) + '...' : '';
-                            return (
-                                <Link
-                                    to={`/blog/${blog._id}`}
-                                    key={blog._id}
-                                    className='overflow-hidden w-96 h-56 m-2 hover:shadow cursor-pointer transition-all duration-300 flex items-start justify-around gap-2'
-                                >
-                                    <img
-                                        src={blog.image}
-                                        alt={blog.title}
-                                        className='object-cover w-1/2 h-full'
-                                    />
-                                    <div className='w-1/2 flex flex-col items-start justify-start'>
-                                        <p className='font-body text-sm font-semibold tracking-wider mt-2'>
-                                            {blog.title ? (blog.title.length > 50 ? blog.title.substring(0, 50) + '...' : blog.title) : 'Untitled'}
-                                        </p>
-                                        <p className='font-body text-xs tracking-wider mt-1'>
-                                            {previewText}
-                                        </p>
+                                <Link to={'/catalog'} key={product._id} className='group bg-paper flex flex-col'>
+                                    <div className='aspect-4/5 overflow-hidden halftone'>
+                                        <img
+                                            src={productImage}
+                                            alt={product.name || `Product ${product._id}`}
+                                            className='w-full h-full object-cover print-img group-hover:filter-none transition-[filter] duration-150'
+                                        />
+                                    </div>
+                                    <div className='flex items-center justify-between gap-2 border-t border-ink px-3 py-2 micro group-hover:bg-ink group-hover:text-paper'>
+                                        <span className='truncate'>[ {String(i + 1).padStart(3, '0')} ] {product.name}</span>
+                                        <span aria-hidden="true">&gt;</span>
                                     </div>
                                 </Link>
                             );
-                        })
-                    ) : null}
-                </div>
+                        })}
+                    </div>
+                ) : (
+                    <p className="micro px-5 py-10 border-b border-ink">
+                        [ Null ] — No products available at the moment.
+                    </p>
+                )}
             </section>
+
+            {/* Blog */}
+            <section id='blog' className='w-full pb-16 md:pb-24'>
+                <SectionHeader index="03" label="Archive / Journal" title="Our Journals" meta={`${blogs.length} entries`} />
+                {blogs.length > 0 ? (
+                    <ol>
+                        {blogs.map((blog, i) => {
+                            const previewText = blog.content ? blog.content.substring(0, 100) + '...' : '';
+                            return (
+                                <li key={blog._id} className='border-b border-ink'>
+                                    <Link
+                                        to={`/blog/${blog._id}`}
+                                        className='group grid grid-cols-12 items-stretch hover:bg-ink hover:text-paper transition-colors duration-100'
+                                    >
+                                        <span className='col-span-2 md:col-span-1 border-r border-current/30 p-3 md:p-5 macro text-2xl md:text-4xl text-hazard'>
+                                            {String(i + 1).padStart(2, '0')}
+                                        </span>
+                                        <div className='col-span-4 md:col-span-2 border-r border-current/30 halftone overflow-hidden'>
+                                            <img
+                                                src={blog.image}
+                                                alt={blog.title}
+                                                className='object-cover w-full h-full min-h-28 print-img'
+                                            />
+                                        </div>
+                                        <div className='col-span-6 md:col-span-8 p-3 md:p-5 flex flex-col justify-between gap-3'>
+                                            <p className='macro text-xl md:text-4xl'>
+                                                {blog.title ? (blog.title.length > 50 ? blog.title.substring(0, 50) + '...' : blog.title) : 'Untitled'}
+                                            </p>
+                                            <p className='hidden md:block text-xs leading-relaxed max-w-2xl opacity-70'>
+                                                {previewText}
+                                            </p>
+                                        </div>
+                                        <span className='hidden md:flex col-span-1 items-center justify-center border-l border-current/30 micro'>
+                                            Read &gt;&gt;
+                                        </span>
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ol>
+                ) : null}
+            </section>
+
             {/* Video section */}
             {/* <section className='w-full px-5 lg:px-20 py-10 h-fit lg:h-screen flex flex-col lg:flex-row gap-10 items-center justify-center'>
                 {Array.isArray(videos) && videos.length > 0 ? (
@@ -375,54 +407,9 @@ const Home = () => {
                     </div>
                 )}
             </section> */}
+
             {/* CTA */}
-            <div className="h-fit md:h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
-                <main className="bg-dark text-light">
-                    <Glare glareColor="#ffffff"
-                        glareOpacity={0.3}
-                        background='transparent'
-                        glareAngle={-30}
-                        glareSize={300}
-                        transitionDuration={800}
-                        playOnce={false}>
-                        <section className="relative w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-20">
-                            <div className="border-b border-light/50 pb-5 flex flex-col gap-6 md:gap-10">
-                                <p className="text-2xl md:text-3xl lg:text-5xl tracking-widest text-center md:text-left">
-                                    Get In touch
-                                </p>
-                                <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
-                                    <p className="text-xs md:text-sm w-full md:w-1/3 lg:w-1/3">
-                                        Contact us today and let's create something extraordinary
-                                        together! We're excited to collaborate with you
-                                    </p>
-                                    <a
-                                        href='https://wa.me/6287851682131'
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="footer-btn w-full md:w-auto md:mr-0 lg:mr-40 text-center"
-                                    >
-                                        Whatsapp
-                                    </a>
-                                </div>
-                            </div>
-                            <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
-                                <a
-                                    href="https://instagram.com/reignite.district"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
-                                >
-                                    @reignite.district
-                                </a>
-                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
-                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left wrap-break-words">
-                                    reignitedistrict@gmail.com
-                                </p>
-                            </div>
-                        </section>
-                    </Glare>
-                </main>
-            </div>
+            <SiteFooter />
         </main>
     )
 }

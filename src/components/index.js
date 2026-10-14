@@ -5,6 +5,8 @@ import SplitText from "./SplitText.jsx";
 import Hero from "./Hero.jsx";
 import ImageCarousel from "./ImageCarousel.jsx";
 import Glare from "./Glare.jsx";
+import SiteFooter from "./SiteFooter.jsx";
+import SectionHeader from "./SectionHeader.jsx";
 export {
   Navbar,
   Hero,
@@ -13,4 +15,6 @@ export {
   SplitText,
   ImageCarousel,
   Glare,
+  SiteFooter,
+  SectionHeader,
 };

@@ -29,32 +29,51 @@ const Login = () => {
     };
 
     return (
-        <div className="h-screen w-full flex flex-col items-center justify-center ">
-            <h2 id="form-title" className="text-center text-3xl font-bold mb-10 text-gray-800">Login</h2>
-            <form className="space-y-5" onSubmit={handleSubmit}>
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                        <span className=" sm:inline">{error}</span>
-                    </div>
-                )}
-                <input className="w-full text-gray-400 h-12 border border-gray-800 px-3 rounded-lg" placeholder="Username" id="username"
-                    name="username"
-                    type="text"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)} />
-                <input className="w-full text-gray-400 h-12 border border-gray-800 px-3 rounded-lg" id="password"
-                    name="password"
-                    type="password"
-                    placeholder='Password'
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)} />
-                <button type='submit' className="w-full h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign in</button>
-            </form>
+        <div className="min-h-screen w-full flex items-center justify-center bg-paper text-ink p-4">
+            <div className="w-full max-w-md border-2 border-ink crosshairs">
+                <div className="flex justify-between bg-ink text-paper micro px-3 py-1.5">
+                    <span>[ Restricted ]</span>
+                    <span>Auth / RD-SYS</span>
+                </div>
+                <div className="p-6 md:p-8">
+                    <h2 id="form-title" className="macro text-6xl mb-8">
+                        Login<span className="text-hazard">.</span>
+                    </h2>
+                    <form className="flex flex-col gap-6" onSubmit={handleSubmit} aria-labelledby="form-title">
+                        {error && (
+                            <p role="alert" className="border-2 border-hazard text-hazard micro px-3 py-2">
+                                [ ! ] {error}
+                            </p>
+                        )}
+                        <label className="flex flex-col gap-1">
+                            <span className="micro opacity-60">Operator ID</span>
+                            <input className="field" placeholder="Username" id="username"
+                                name="username"
+                                type="text"
+                                required
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)} />
+                        </label>
+                        <label className="flex flex-col gap-1">
+                            <span className="micro opacity-60">Passkey</span>
+                            <input className="field" id="password"
+                                name="password"
+                                type="password"
+                                placeholder='Password'
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} />
+                        </label>
+                        <button type='submit' className="btn-ink justify-between mt-2">
+                            <span>Sign in</span>
+                            <span aria-hidden="true">&gt;&gt;&gt;</span>
+                        </button>
+                    </form>
+                </div>
+                <div className="hazard-stripe h-2" aria-hidden="true" />
+            </div>
         </div>
     );
 };
 
 export default Login;
-

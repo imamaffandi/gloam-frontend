@@ -26,7 +26,8 @@
 
 .block {
   flex: 1;
-  background-color: #111;
+  background-color: var(--color-ink);
+  border-right: 1px solid var(--color-paper);
   transform: scaleY(1);
   will-change: transform;
   visibility: visible;

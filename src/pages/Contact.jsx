@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import "./Contact.css"
 import { useLoading } from '../context/LoadingContext';
 
 const Contact = () => {
@@ -24,80 +23,100 @@ const Contact = () => {
         setSubmitted(true);
     };
     return (
-        <>
-            <main className="min-h-screen bg-neutral-900 text-neutral-100 flex flex-col items-center justify-center p-10 md:p-20 font-body">
-                {/* Title */}
-                <section className="text-center mb-10">
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Contact Us</h1>
-                    <p className="text-sm md:text-base text-neutral-400 mt-3">
-                        Let’s collaborate, connect, or create something that lasts.
-                    </p>
-                </section>
+        <main className="min-h-screen bg-paper text-ink pt-12 font-body flex flex-col">
+            <div className="grid grid-cols-2 md:grid-cols-4 border-b border-ink micro">
+                <span className="px-4 py-2 border-r border-ink">[ Contact ]</span>
+                <span className="px-4 py-2 md:border-r border-ink">Doc / RD-CNT</span>
+                <span className="hidden md:block px-4 py-2 border-r border-ink">Channel / WhatsApp</span>
+                <span className="hidden md:block px-4 py-2 text-right">Status / Open</span>
+            </div>
 
+            {/* Title */}
+            <section className="p-4 md:p-8 border-b-2 border-ink">
+                <h1 className="macro text-[clamp(4rem,14vw,16rem)]">
+                    Contact<span className="text-hazard">.</span>
+                </h1>
+                <p className="micro mt-6">
+                    /// Let’s collaborate, connect, or create something that lasts.
+                </p>
+            </section>
+
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
                 {/* Contact Info */}
-                <div className="grid md:grid-cols-3 gap-10 w-full max-w-5xl mb-16 text-center">
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Visit Us</h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed">
+                <dl className="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-ink">
+                    <div className="p-4 md:p-8 border-b border-ink">
+                        <dt className="micro opacity-60 mb-2">01 / Visit Us</dt>
+                        <dd className="text-sm leading-relaxed font-bold">
                             Jl. Cempaka, Pesanggrahan<br />Malang, East Java, Indonesia
-                        </p>
+                        </dd>
                     </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Email</h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed">reignitedistrict@gmail.com</p>
+                    <div className="p-4 md:p-8 border-b border-ink">
+                        <dt className="micro opacity-60 mb-2">02 / Email</dt>
+                        <dd className="text-sm font-bold break-all">reignitedistrict@gmail.com</dd>
                     </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Instagram</h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed">@reignite.district</p>
+                    <div className="p-4 md:p-8">
+                        <dt className="micro opacity-60 mb-2">03 / Instagram</dt>
+                        <dd className="text-sm font-bold">@reignite.district</dd>
                     </div>
-                </div>
+                </dl>
 
                 {/* Contact Form */}
                 <form
                     onSubmit={handleSubmit}
-                    className="w-full max-w-3xl bg-neutral-800 p-10 rounded-2xl shadow-lg flex flex-col gap-5"
+                    className="lg:col-span-8 p-4 md:p-8 flex flex-col gap-8"
                 >
-                    <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="Your name"
-                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
-                        required
-                    />
-                    <input
-                        type="email"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="Your email"
-                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
-                        required
-                    />
-                    <textarea
-                        name="message"
-                        value={form.message}
-                        onChange={handleChange}
-                        placeholder="Write your message..."
-                        rows="6"
-                        className="bg-neutral-700 text-white px-5 py-3 rounded-md outline-none focus:ring-2 focus:ring-white/20"
-                        required
-                    />
+                    <p className="micro">[ Form / Outbound Message ]</p>
+                    <label className="flex flex-col gap-1">
+                        <span className="micro opacity-60">A — Name</span>
+                        <input
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            placeholder="Your name"
+                            className="field"
+                            required
+                        />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span className="micro opacity-60">B — Email</span>
+                        <input
+                            type="email"
+                            name="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="Your email"
+                            className="field"
+                            required
+                        />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span className="micro opacity-60">C — Message</span>
+                        <textarea
+                            name="message"
+                            value={form.message}
+                            onChange={handleChange}
+                            placeholder="Write your message..."
+                            rows="6"
+                            className="field resize-none"
+                            required
+                        />
+                    </label>
                     <button
                         type="submit"
-                        className="bg-white text-black px-8 py-3 rounded-md font-semibold tracking-wide hover:bg-neutral-200 transition-all"
+                        className="btn-ink justify-between"
                     >
-                        {submitted ? 'Message Sent ✅' : 'Send Message'}
+                        <span>{submitted ? '[ ✓ ] Message Sent' : 'Send Message'}</span>
+                        <span aria-hidden="true">&gt;&gt;&gt;</span>
                     </button>
                 </form>
+            </div>
 
-                <p className="text-xs text-neutral-500 mt-10 tracking-widest">
-                    © {new Date().getFullYear()} REIGNITE DISTRICT — Crafted for imperfect hours.
-                </p>
-            </main>
-        </>
-
+            <div className="hazard-stripe h-3 w-full border-t border-ink" aria-hidden="true" />
+            <p className="micro px-4 md:px-8 py-4">
+                © {new Date().getFullYear()} REIGNITE DISTRICT® — Crafted for imperfect hours.
+            </p>
+        </main>
     )
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { blogAPI } from '../services/api'
-import { Glare } from '../components'
+import { SiteFooter } from '../components'
 import { useLoading } from '../context/LoadingContext';
 
 const Blog = () => {
@@ -57,13 +57,13 @@ const Blog = () => {
     // Show error only after loading is complete
     if (error || !blog) {
         return (
-            <main className='min-h-screen w-full font-body flex flex-col items-center justify-center p-5'>
-                <p className='text-red-600 mb-4'>{error || 'Blog post not found'}</p>
-                <Link to={"/"} className='flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-xl px-5 py-3 hover:bg-neutral-700 transition-colors'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-                    </svg>
-                    Back to Home
+            <main className='min-h-screen w-full font-body flex flex-col items-center justify-center p-5 gap-6'>
+                <div role="alert" className="border-2 border-hazard max-w-md w-full">
+                    <p className="bg-hazard text-paper micro px-3 py-1.5">[ Error / 404 ] Record Not Found</p>
+                    <p className="p-4 text-sm">{error || 'Blog post not found'}</p>
+                </div>
+                <Link to={"/"} className='btn-ink'>
+                    <span aria-hidden="true">&lt;&lt;&lt;</span> Back to Home
                 </Link>
             </main>
         );
@@ -81,111 +81,85 @@ const Blog = () => {
     };
 
     return (
-        <main className='min-h-screen w-full font-body relative'>
-            {blog.image && (
-                <img
-                    src={blog.image}
-                    alt={blog.title}
-                    className='w-full h-[80vh] object-cover'
-                />
-            )}
-            <Link
-                to={"/"}
-                className='absolute left-5 top-5 z-50 flex items-center justify-center gap-2 bg-light rounded-xl px-5 py-3 hover:bg-neutral-100 transition-colors'
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-                </svg>
-                Back
-            </Link>
-            <div className='space-y-2 p-5'>
-                <h1 className='text-5xl tracking-widest font-semibold'>
-                    {blog.title}
-                </h1>
+        <main className='min-h-screen w-full font-body relative bg-paper text-ink pt-12'>
+            <div className="flex items-stretch justify-between border-b border-ink micro">
+                <Link to={"/"} className='px-4 py-2 border-r border-ink hover:bg-ink hover:text-paper'>
+                    &lt;&lt;&lt; Back
+                </Link>
+                <span className="px-4 py-2 truncate">Journal / Entry {String(id).slice(-6).toUpperCase()}</span>
+            </div>
 
-                {/* Media Player (Audio/Video) */}
-                {blog.media && blog.mediaType && (
-                    <div className='my-6 w-full'>
-                        {blog.mediaType === 'audio' ? (
-                            <audio
-                                ref={mediaRef}
-                                controls
-                                autoPlay
-                                className='w-full'
-                            >
-                                <source src={blog.media} type="audio/mpeg" />
-                                <source src={blog.media} type="audio/wav" />
-                                <source src={blog.media} type="audio/ogg" />
-                                Your browser does not support the audio tag.
-                            </audio>
-                        ) : blog.mediaType === 'video' ? (
-                            <video
-                                ref={mediaRef}
-                                controls
-                                autoPlay
-                                className='w-full max-w-4xl mx-auto rounded-lg'
-                            >
-                                <source src={blog.media} type="video/mp4" />
-                                <source src={blog.media} type="video/webm" />
-                                <source src={blog.media} type="video/ogg" />
-                                Your browser does not support the video tag.
-                            </video>
-                        ) : null}
-                    </div>
+            <header className="grid grid-cols-1 lg:grid-cols-12 border-b-2 border-ink">
+                <div className="lg:col-span-7 p-4 md:p-8 flex flex-col justify-end gap-6 border-b lg:border-b-0 lg:border-r border-ink">
+                    <p className="micro text-hazard">[ Archive / Journal ]</p>
+                    <h1 className='macro text-[clamp(3rem,8vw,8rem)] wrap-break-word'>
+                        {blog.title}
+                    </h1>
+                </div>
+                {blog.image && (
+                    <figure className="lg:col-span-5 p-4 md:p-8">
+                        <div className="crosshairs border border-ink halftone">
+                            <img
+                                src={blog.image}
+                                alt={blog.title}
+                                className='w-full h-[50vh] lg:h-[70vh] object-cover print-img'
+                            />
+                        </div>
+                        <figcaption className="micro mt-3 opacity-60">Fig. 01 — {blog.title}</figcaption>
+                    </figure>
                 )}
+            </header>
 
-                <p className='text-sm tracking-wide whitespace-pre-line'>
-                    {formatContent(blog.content)}
-                </p>
-            </div>
-            {/* CTA */}
-            <div className="h-fit md:h-screen w-full relative font-body py-10 md:py-0 flex items-center justify-center">
-                <main className="bg-dark text-light">
-                    <Glare glareColor="#ffffff"
-                        glareOpacity={0.3}
-                        background='transparent'
-                        glareAngle={-30}
-                        glareSize={300}
-                        transitionDuration={800}
-                        playOnce={false}>
-                        <section className="relative w-full h-full flex flex-col justify-between p-6 md:p-10 lg:p-20">
-                            <div className="border-b border-light/50 pb-5 flex flex-col gap-6 md:gap-10">
-                                <p className="text-2xl md:text-3xl lg:text-5xl tracking-widest text-center md:text-left">
-                                    Get In touch
-                                </p>
-                                <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
-                                    <p className="text-xs md:text-sm w-full md:w-1/3 lg:w-1/3">
-                                        Contact us today and let's create something extraordinary
-                                        together! We're excited to collaborate with you
-                                    </p>
-                                    <a
-                                        href='https://wa.me/6287851682131'
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="footer-btn w-full md:w-auto md:mr-0 lg:mr-40 text-center"
-                                    >
-                                        Whatsapp
-                                    </a>
-                                </div>
-                            </div>
-                            <div className=" pt-6 md:pt-10 flex flex-col md:flex-row items-start md:items-center justify-around gap-4 md:gap-0 w-full">
-                                <a
-                                    href="https://instagram.com/gloamingmistake"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left"
+            <div className='grid grid-cols-1 md:grid-cols-12'>
+                <aside className="md:col-span-3 border-b md:border-b-0 md:border-r border-ink p-4 md:p-8 micro space-y-2">
+                    <p>Ref / {String(id).slice(-6).toUpperCase()}</p>
+                    {blog.mediaType && <p>Media / {blog.mediaType}</p>}
+                    <span className="barcode block h-6 w-24 mt-4" aria-hidden="true" />
+                </aside>
+
+                <article className="md:col-span-9 p-4 md:p-8">
+                    {/* Media Player (Audio/Video) */}
+                    {blog.media && blog.mediaType && (
+                        <div className='mb-8 w-full border border-ink'>
+                            <p className="micro bg-ink text-paper px-3 py-1.5">
+                                ▶ Playback / {blog.mediaType}
+                            </p>
+                            {blog.mediaType === 'audio' ? (
+                                <audio
+                                    ref={mediaRef}
+                                    controls
+                                    autoPlay
+                                    className='w-full'
                                 >
-                                    @gloamingmistake
-                                </a>
-                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left">+62 878-5168-2131</p>
-                                <p className="w-full md:w-64 tracking-wider text-xs md:text-xs/5 text-center md:text-left break-words">
-                                    gloamingmistake@gmail.com
-                                </p>
-                            </div>
-                        </section>
-                    </Glare>
-                </main>
+                                    <source src={blog.media} type="audio/mpeg" />
+                                    <source src={blog.media} type="audio/wav" />
+                                    <source src={blog.media} type="audio/ogg" />
+                                    Your browser does not support the audio tag.
+                                </audio>
+                            ) : blog.mediaType === 'video' ? (
+                                <video
+                                    ref={mediaRef}
+                                    controls
+                                    autoPlay
+                                    className='w-full'
+                                >
+                                    <source src={blog.media} type="video/mp4" />
+                                    <source src={blog.media} type="video/webm" />
+                                    <source src={blog.media} type="video/ogg" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : null}
+                        </div>
+                    )}
+
+                    <p className='text-sm leading-relaxed max-w-3xl whitespace-pre-line'>
+                        {formatContent(blog.content)}
+                    </p>
+                </article>
             </div>
+
+            {/* CTA */}
+            <SiteFooter instagram="gloamingmistake" email="gloamingmistake@gmail.com" />
         </main>
     )
 }

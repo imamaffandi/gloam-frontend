@@ -50,14 +50,31 @@ const Loading = () => {
     return (
         <div
             ref={containerRef}
-            className='fixed inset-0 z-9999 bg-dark text-9xl text-light flex items-center justify-center w-full h-screen'
+            className='fixed inset-0 z-9999 bg-paper text-ink flex flex-col w-full h-screen'
         >
-            <img
-                ref={logoRef}
-                src="/logo.png"
-                alt="Loading"
-                className='object-contain max-w-xs md:max-w-md animate-pulse'
-            />
+            <div className="flex justify-between border-b border-ink micro px-4 py-2">
+                <span>[ Reignite District ]</span>
+                <span>Boot Sequence / RD-01</span>
+            </div>
+            <div className="flex-1 flex items-center justify-center overflow-hidden">
+                {/* Logo asset is white; invert to carbon ink on paper */}
+                <img
+                    ref={logoRef}
+                    src="/logo.png"
+                    alt="Loading"
+                    className='object-contain max-w-xs md:max-w-md invert'
+                />
+            </div>
+            <div className="border-t border-ink">
+                <div className="flex justify-between micro px-4 py-2">
+                    <span className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 bg-hazard animate-pulse" />
+                        Loading Assets
+                    </span>
+                    <span>/// Stand By</span>
+                </div>
+                <div className="hazard-stripe h-3 border-t border-ink" aria-hidden="true" />
+            </div>
         </div>
     )
 }
